@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Extension Preview</title>
+        <link rel="stylesheet" href="/assets/preview.css">
+        <script>
+            console.log("%cWebfuse Labs", "color: rgb(222, 74, 183); font-weight: bold;");
+
+            fetch("/ws")
+                .then(res => res.text())
+                .then(url => {
+                    const print = msg => console.log(`%c${msg}`, "color: rgb(222, 74, 183);");
+                    const reloadTarget = target => {
+                        document.querySelector(`#${target} iframe`)
+                            .contentWindow
+                            .location
+                            .reload();
+                    };
+
+                    const ws = new WebSocket(url);
+                    ws.onmessage = e => {
+                        switch(e.data) {
+                            case "init":
+                            print("Hot module replacement is active...");
+                                break;
+                            case "reload":
+                                print(`[${new Date().toLocaleString(
+                                    Intl.DateTimeFormat().resolvedOptions().locale, {
+                                        hour: "numeric", minute: "numeric", second: "numeric"
+                                    }
+                                )}] Replaced contents.`);
+                                reloadTarget("newtab");
+                                reloadTarget("popup");
+                                break;
+                        }
+                    };
+                });
+        </script>
+        <script src="/assets/mock.js"></script>
+        <script src="/assets/background.js"></script>
+        <script src="/assets/content.js"></script>
+    </head>
+    <body>
+        <header>
+            <div class="wrapper">
+                <div>
+                    <?xml version="1.0" encoding="utf-8"?>
+                        <svg viewBox="0 0 140 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 0 34.97 L 0 215.029 C 0 239.229 23.947 256.363 46.33 247.736 C 95.249 228.881 130 181.04 130 124.998 C 130 68.958 95.249 21.117 46.33 2.262 C 42.323 0.718 38.262 0 34.302 0 C 16.139 -0.004 0 15.103 0 34.97 Z" fill="url(#paint0_linear_10186_1730)"/>
+                        <path d="M 0 201.488 C 20.876 201.488 39.776 192.919 53.47 179.084 C 67.162 165.253 75.645 146.122 75.645 125.072 C 75.645 82.937 41.713 48.66 0 48.66 L 0 201.488 Z" fill="white" fill-opacity="0.25"/>
+                        <defs>
+                            <linearGradient id="paint0_linear_10186_1730" x1="904.07" y1="303.509" x2="1073.41" y2="91.4966" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1, 0, 0, 1, -870, -0.000025)">
+                            <stop stop-color="#760DFF"/>
+                            <stop offset="1" stop-color="#FFB4C0"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <strong>Labs</strong>
+                    <a href="https://www.webfuse.com" target="_blank">webfuse.com</a>
+                </div>
+                <ul>
+                    <li>
+                        <a href="https://github.com/surfly/labs?tab=readme-ov-file#webfuse-labs" target="_blank">Documentation</a>
+                    </li>
+                    <li>
+                        <a href="https://docs.surfly.com/webfuse/extensions/api_reference" target="_blank">API Reference</a>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <main>
+            <div class="wrapper">
+                <section id="newtab">
+                    <div>
+                        <iframe src="/newtab.html"></iframe>
+                    </div>
+                </section>
+                <section id="popup">
+                    <div>
+                        <iframe src="/popup.html"></iframe>
+                    </div>
+                </section>
+            </div>
+        </main>
+        <footer>&copy; Surfly B.V.</footer>
+    </body>
+</html>
