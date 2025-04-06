@@ -1,0 +1,20 @@
+<template>
+    <button type="button">
+        <slot></slot>
+    </button>
+</template>
+
+<script>
+    connectedCallback() {
+        console.log("SFC attached to target.");
+    }
+</script>
+
+<style>
+    button {
+        cursor: pointer;
+        outline: none;
+        border: none;
+        border-radius: 0.25rem;
+    }
+</style>

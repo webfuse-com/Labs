@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "name": "test",
+  "type": "module",
+  "scripts": {
+    "bundle": "labs bundle",
+    "preview": "labs preview"
+  }
+}
