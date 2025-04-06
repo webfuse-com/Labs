@@ -8,5 +8,15 @@
   "bin": {
     "labs": "./lib/cli.js"
   },
-  "author": "Thassilo M. Schiepanski"
+  "author": "Thassilo M. Schiepanski",
+  "dependencies": {
+    "clean-css": "^5.3.3",
+    "html-minifier": "^4.0.0",
+    "node-html-parser": "^7.0.1",
+    "prettier": "^3.5.3",
+    "sass": "^1.86.0",
+    "typescript": "^5.8.2",
+    "uglify-js": "^3.19.3",
+    "ws": "^8.18.1"
+  }
 }
