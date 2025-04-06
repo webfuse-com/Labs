@@ -1,0 +1,12 @@
+{
+  "name": "@surfly/labs",
+  "version": "0.1.0",
+  "type": "module",
+  "files": [
+    "./lib"
+  ],
+  "bin": {
+    "labs": "./lib/cli.js"
+  },
+  "author": "Thassilo M. Schiepanski"
+}
