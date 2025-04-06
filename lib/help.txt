@@ -1,0 +1,17 @@
+Webfuse Labs
+Usage: labs <command> [--<arg> [<option>]?]*
+
+• create         Create an extension project blueprint.
+  --path, -P     Path to create blueprint at [./my-extension]
+• bundle         Bundle and emit extension source files.
+  --debug, -D    Skip minification of emitted files
+  --watch, -W    Watch files for incremental builds
+• preview        Spin up the preview environment.
+  --only         Just serve preview, without implicit bundle (watch)
+
+  --stacktrace   Print stacktrace of non-recoverable exceptions
+  --working-dir  Specify working, i.e. extension directory [./]
+
+More information:
+https://github.com/surfly/labs#webfuse-labs
+https://docs.surfly.com/webfuse/extensions/introduction
