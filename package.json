@@ -6,7 +6,16 @@
     "./lib"
   ],
   "bin": {
-    "labs": "./lib/cli.js"
+    "labs": "./lib/cli.js",
+    "webfuse-labs": "./lib/cli.js"
+  },
+  "scripts": {
+    "labs": "cd ./test-extension && ../labs",
+    "bundle": "npm run labs -- bundle --stacktrace",
+    "bundle:debug": "npm run bundle -- --debug",
+    "bundle:watch": "npm run bundle -- --watch",
+    "preview": "npm run labs -- preview --only",
+    "test": "npm run bundle:debug && node ./test/test.js"
   },
   "author": "Thassilo M. Schiepanski",
   "dependencies": {
