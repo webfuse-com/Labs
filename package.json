@@ -10,6 +10,7 @@
     "webfuse-labs": "./lib/cli.js"
   },
   "scripts": {
+    "prepare": "husky",
     "labs": "cd ./test-extension && ../labs",
     "bundle": "npm run labs -- bundle --stacktrace",
     "bundle:debug": "npm run bundle -- --debug",
@@ -27,5 +28,8 @@
     "typescript": "^5.8.2",
     "uglify-js": "^3.19.3",
     "ws": "^8.18.1"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
   }
 }
