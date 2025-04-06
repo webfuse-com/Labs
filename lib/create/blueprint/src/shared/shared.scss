@@ -1,0 +1,18 @@
+/*
+ * Styles that affect both the Newtab, and the Popup.
+ */
+
+:root {
+    --color-primary: #F194B4;
+    --color-bg: #FFFFFF;
+    --color-fg: #002626;
+}
+
+html {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+}
+
+body {
+    padding: 1rem;    
+}
