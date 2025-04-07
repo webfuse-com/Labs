@@ -4,5 +4,8 @@
   "scripts": {
     "bundle": "labs bundle",
     "preview": "labs preview"
+  },
+  "devDependencies": {
+    "@surfly/labs": "github:surfly/labs"
   }
 }

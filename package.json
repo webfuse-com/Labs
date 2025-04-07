@@ -10,7 +10,6 @@
     "webfuse-labs": "./lib/cli.js"
   },
   "scripts": {
-    "prepare": "husky",
     "labs": "cd ./test-extension && ../labs",
     "bundle": "npm run labs -- bundle --stacktrace",
     "bundle:debug": "npm run bundle -- --debug",

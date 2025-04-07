@@ -4,18 +4,23 @@
 
 > [**Webfuse**](https://webfuse.com) is a web augmentation platform to instantly extend, automate & share any web session. Webfuse extensions are browser extensions, but enhanced with a powerful augmentation API.
 
-**Labs** is a framework that facilitates extension development: Build with a bundler made for extensions, in a local preview environment. It supports Typescript and SCSS out-of-the-box, and also [Vue](https://vuejs.org/guide/scaling-up/sfc.html)-inspired single file components. Imagine [Vite](https://vite.dev), but for extensions.
+**Labs** is a framework that facilitates web extension development: Build with a bundler made for extensions, in a local preview environment. It supports Typescript and SCSS out-of-the-box, and also [Vue](https://vuejs.org/guide/scaling-up/sfc.html)-inspired single file components. Imagine [Vite](https://vite.dev), but for extensions.
 
-1. [Prerequisites](#prerequisites)
-2. [Installation](#installation)
-3. [Preview](#preview)
-4. [Assets](#assets)
-5. [Session Integration](#session-integration)
-6. [CLI Reference](#cli-reference)
-7. [Cheatsheet](#cheatsheet)
-8. [Further Reading](#further-reading)
+<p align="center">
+  <a href="#browser-webfuse-api" target="_blank"><img src="./.github/figure-2.png" alt="Labs' features: Bundler, SFCs, and Preview" width="700"></a>
+</p>
 
-### Prerequisites
+1. [**Prerequisites**](#prerequisites)
+2. [**Installation**](#installation)
+3. [**Preview**](#preview)
+4. [**Assets**](#assets)
+5. [**Browser & Webfuse APIs**](#browser--webfuse-apis)
+6. [**Session Integration**](#session-integration)
+7. [**CLI Reference**](#cli-reference)
+8. [**Cheatsheet**](#cheatsheet)
+9. [**Further Reading**](#further-reading)
+
+## Prerequisites
 
 - [Node.js + NPM](https://nodejs.org) v22+/v10+
 - [Webfuse](https://webfuse.com/studio/auth/signup) Account
@@ -27,6 +32,15 @@ Run the below command to install Labs. It becomes available in your command line
 ``` console
 npm i -g surfly/labs
 ```
+
+> You might need to execute the above command with admin priviliges. Try `sudo npm i -g surfly/labs` – at your own risk. Otherwise, create a wrapper directory, and install Labs on project level:
+> ``` console
+> mkdir with-labs
+> cd with-labs
+> npm init -y
+> npm i surfly/labs
+> ```
+> Prefix all subsequent `labs` commands with `npx`, e.g. `npx labs create`.
 
 Use `labs` with the `create` command to scaffold an extension project:
 
@@ -45,13 +59,9 @@ labs preview
 
 The preview app is a browser application. Open the address that is printed to the console in a web browser. The preview environment implements hot module replacement. This is, the provided UI always presents the latest bundle.
 
-<a href="#local-development" target="_blank"><img src="./.github/figure-1.png" alt="Webfuse Labs Preview Environment" width="640"></a>
+<a href="#local-development" target="_blank"><img src="./.github/figure-1.png" alt="Webfuse Labs Preview Environment"></a>
 
 > All `labs` commands work in the current working directory, which must hence correspond to an extension project's root directory.
-
-### Browser & Webfuse APIs
-
-The Labs preview environment primarily enables incremental development of the extension UI. Extensions do certainly subsist on [Browser APIs](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API), and the [Webfuse API](https://docs.surfly.com/webfuse/extensions/api_reference). API-based functionality, on the other hand, is strongly tied to a browser and session environment. A Labs preview is considered 'flat', i.e. it mocks all relevant APIs, but only for it to exist. Any API call logs a debug message to the console to verify it would have happened.
 
 ## Assets
 
@@ -183,6 +193,12 @@ Labs introduces a lean single file component (SFC) interface. Every SFC is decla
 A valid SFC file assembles from at most one of the following tags (top-level): `<template>` can contain the component markup. It can be leveraged with [slots](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_templates_and_slots#adding_flexibility_with_slots). `<style>` can contain styles that apply only to the component markup. `<script>` can contain native web component [lifecycle callbacks](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#custom_element_lifecycle_callbacks), and utilize related concepts.
 
 > SFCs work with SCSS and TypeScript by specifiying a `lang` attribute on the respective tag. This is, `<style lang="scss">` or `<script lang="ts">`, respectively.
+
+## Browser & Webfuse APIs
+
+The Labs preview environment primarily enables incremental development of the extension UI. Extensions do certainly subsist on [Browser APIs](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API), and the [Webfuse API](https://docs.surfly.com/webfuse/extensions/api_reference). API-based functionality, on the other hand, is strongly tied to a browser and session environment. A Labs preview is considered 'flat', i.e. it mocks all relevant APIs, but only for it to exist. Any API call logs a debug message to the console to verify it would have happened.
+
+> API mocking is work in progress (Promise APIs, etc.).
 
 ## Session Integration
 
