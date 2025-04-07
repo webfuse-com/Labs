@@ -1,14 +1,16 @@
+<a href="#webfuse-labs" target="_blank"><img src="./.github/hero.png" alt="Webfuse Labs"></a>
+
 # Webfuse Labs
 
 > [**Webfuse**](https://webfuse.com) is a web augmentation platform to instantly extend, automate & share any web session. Webfuse extensions are browser extensions, but enhanced with a powerful augmentation API.
 
-**Webfuse Labs** is a framework that facilitates extension development: Build with a bundler made for extensions, in a local preview environment. It supports Typescript and SCSS out-of-the-box, and also [Vue](https://vuejs.org/guide/scaling-up/sfc.html)-inspired single file components. Imagine [Vite](https://vite.dev), but for extensions.
+**Labs** is a framework that facilitates extension development: Build with a bundler made for extensions, in a local preview environment. It supports Typescript and SCSS out-of-the-box, and also [Vue](https://vuejs.org/guide/scaling-up/sfc.html)-inspired single file components. Imagine [Vite](https://vite.dev), but for extensions.
 
 1. [Prerequisites](#prerequisites)
 2. [Installation](#installation)
 3. [Preview](#preview)
 4. [Assets](#assets)
-5. [Integration](#integration)
+5. [Session Integration](#session-integration)
 6. [CLI Reference](#cli-reference)
 7. [Cheatsheet](#cheatsheet)
 8. [Further Reading](#further-reading)
@@ -43,11 +45,13 @@ labs preview
 
 The preview app is a browser application. Open the address that is printed to the console in a web browser. The preview environment implements hot module replacement. This is, the provided UI always presents the latest bundle.
 
+<a href="#local-development" target="_blank"><img src="./.github/figure-1.png" alt="Webfuse Labs Preview Environment" width="640"></a>
+
 > All `labs` commands work in the current working directory, which must hence correspond to an extension project's root directory.
 
 ### Browser & Webfuse APIs
 
-The Labs preview environment primarily enables incremental development of the extension UI. Extensions do certainly subsist on [Browser APIs](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API), and the [Webfuse API](https://docs.surfly.com/webfuse/extensions/api_reference). API-based functionality, on the other hand, is strongly tied to a browser and session environment. A Labs preview is considered 'flat', i.e. it mocks all relevant APIs, but only to exist. Any API call logs a debug message to the console to verify it would have happened.
+The Labs preview environment primarily enables incremental development of the extension UI. Extensions do certainly subsist on [Browser APIs](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API), and the [Webfuse API](https://docs.surfly.com/webfuse/extensions/api_reference). API-based functionality, on the other hand, is strongly tied to a browser and session environment. A Labs preview is considered 'flat', i.e. it mocks all relevant APIs, but only for it to exist. Any API call logs a debug message to the console to verify it would have happened.
 
 ## Assets
 
@@ -83,7 +87,7 @@ Run the `bundle` command to emit your session-ready extension bundle to the `/di
 labs bundle
 ```
 
-The bundler automatically runs with the preview environment. Once your preview is up and running, there is no need to run the `bundle` command everytime you did edit the source.
+The bundler automatically runs with the preview environment. Once your preview is up and running, there is no need to run the `bundle` command everytime you edited the source.
 
 > You do not have to specify a `manifest.json`. Labs takes care of all the metadata. In particular, it copies the name and version fields from `package.json`.
 
@@ -180,9 +184,9 @@ A valid SFC file assembles from at most one of the following tags (top-level): `
 
 > SFCs work with SCSS and TypeScript by specifiying a `lang` attribute on the respective tag. This is, `<style lang="scss">` or `<script lang="ts">`, respectively.
 
-## Integration
+## Session Integration
 
-Follow the the [Official Documentation](https://docs.surfly.com/webfuse/extensions/introduction#extension-directory-upload-handling-and-limitations) to integrate your extension with a session. This holds for both use in production, as well as verification with full browser/session capabilities. In a nutshell, this comprises three steps:
+Follow the [Official Documentation](https://docs.surfly.com/webfuse/extensions/introduction#extension-directory-upload-handling-and-limitations) to install your extension to a Webfuse session. This holds for both use in production, as well as verification with full browser/session capabilities. In a nutshell, this comprises three steps:
 
 1. Open your Webfuse session,
 2. navigate to the Extensions tab, and
@@ -192,42 +196,37 @@ Follow the the [Official Documentation](https://docs.surfly.com/webfuse/extensio
 
 ## CLI Reference
 
+### Synopsis
+
 ``` console
-labs <command> [--<arg> [<option>]?]*
+labs <command> [--<argument> [<option>]?]*
 ```
 
-| | | |
-| :- | :- | :- |
-| `--stacktrace` | Print stacktrace of non-recoverable exceptions | |
-| `--working-dir` | Specify working, i.e. extension directory [./] | `./` |
+`--stacktrace` &emsp; Print stacktrace of non-recoverable exceptions  
+`--working-dir` &emsp; Specify working, i.e. extension directory &emsp; `./`  
 
-### `create`
+### Commands
+
+#### `create`
 
 Create an extension project blueprint.
 
-| | | |
-| :- | :- | :- |
-| `--path`, `-P` | Path to create blueprint at | `./my-extension` |
+`--path`, `-P` &emsp; Path to create blueprint at &emsp; `./my-extension`  
 
-### `bundle`
+#### `bundle`
 
 Bundle and emit extension source files.
 
-| | | |
-| :- | :- | :- |
-| `--debug`, `-D` | Skip minification of emitted files | |
-| `--watch`, `-W` | Watch files for incremental builds | |
+`--debug`, `-D` &emsp; Skip minification of emitted files  
+`--watch`, `-W` &emsp; Watch files for incremental builds  
 
-### `preview`
+#### `preview`
 
 Spin up the preview environment.
 
-| | | |
-| :- | :- | :- |
-| `--only` | Just serve preview, without implicit bundle (watch) ||
+`--only` &emsp; Just serve preview, without implicit bundle (watch)  
 
 > Use the `help` command to display usage description in the CLI.
-
 ## Cheatsheet
 
 **Setup:**
@@ -244,7 +243,7 @@ Spin up the preview environment.
 **Upload:**
 
 1. `labs bundle`
-2. Upload `/dist` in Webfuse session.
+2. Upload `/dist` to Webfuse session.
 
 ## Further Reading
 
@@ -252,3 +251,10 @@ Spin up the preview environment.
 - [Webfuse Extensions](https://docs.surfly.com/webfuse/extensions/api_reference)
 - [Browser Extensions](https://developer.chrome.com/docs/extensions/get-started)
 - [Introducing: Web Augmentation](https://www.webfuse.com/blog/web-augmentation)
+
+<br>
+<a href="https://webfuse.com" target="_blank"><img src="./.github/cta.png" alt="Instantly extend, automate & share any web session"></a>
+
+<p align="right">
+  <sub>&copy; Surfly B.V.</sub>
+</p>
