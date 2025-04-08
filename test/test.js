@@ -4,9 +4,19 @@ import { join } from "path";
 import { deepEqual, equal } from "assert";
 
 
+/**
+ * Read a from the test extension's dist directory (by relative path).
+ */
 global._readDist = (name) => {
     return readFileSync(join(import.meta.dirname, "../test-extension/dist/", name)).toString();
 };
+
+/**
+ * Assertion functions:
+ * - assertEquals()
+ * - assertIn()     ... string in string?
+ * - assertNotIn()  ... string not in string?
+ */
 
 global.assertEquals = (actual, expected, message) => {
     catchError(() => {
@@ -31,6 +41,10 @@ global.assertNotIn = (actualPartial, expected, message, preserveWhitespace) => {
 };
 
 
+/**
+ * Print test case failure in a neat way.
+ * Print trace to test case.
+ */
 const catchError = (assertion, errorMessage) => {
     const trace = (
         ((new Error()).stack ?? "")

@@ -61,7 +61,7 @@ The preview app is a browser application. Open the address that is printed to th
 
 <a href="#local-development" target="_blank"><img src="./.github/figure-1.png" alt="Webfuse Labs Preview Environment"></a>
 
-> All `labs` commands work in the current working directory, which must hence correspond to an extension project's root directory.
+> `labs` commands that affect a specific extension work in its root directory. With other words, the current working directory (`pwd`) needs to correspond to the extensions project's root directory.
 
 ## Assets
 

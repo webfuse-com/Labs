@@ -9,7 +9,7 @@ npx husky
 
 > Husky must not be installed through `npm prepare`, as it would interfere with framework install via NPM from GitHub.
 
-### Commands
+### Utilities
 
 `npm run bundle` &emsp; Bundle the test extension.  
 `npm run bundle:debug` &emsp; Bundle the test extension, without minification.  
