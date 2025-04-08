@@ -13,7 +13,7 @@
 1. [**Prerequisites**](#prerequisites)
 2. [**Installation**](#installation)
 3. [**Preview**](#preview)
-4. [**Assets**](#assets)
+4. [**Resources**](#Resources)
 5. [**Browser & Webfuse APIs**](#browser--webfuse-apis)
 6. [**Upload**](#upload)
 7. [**CLI Reference**](#cli-reference)
@@ -63,7 +63,7 @@ The preview app is a browser application. Open the address that is printed to th
 
 > `labs` commands that affect a specific extension work in its root directory. With other words, the current working directory (`pwd`) needs to correspond to the extensions project's root directory.
 
-## Assets
+## Resources
 
 The scaffolded project resembles the following file structure:
 
@@ -110,7 +110,6 @@ Markup is automatically wrapped within proper document syntax. There is hence no
 <sub><code>src/newtab/newtab.html</code></sub>
 
 ``` html
-<img src="/assets/image.png">
 <h1>Newtab</h1>
 <p>
     This is presented in each new tab in a session.
@@ -183,7 +182,6 @@ Labs introduces a lean single file component (SFC) interface. Every SFC is decla
 <sub><code>src/newtab/popup.html</code></sub>
 
 ``` html
-<strong>My Extension</strong>
 <h1>Newtab</h1>
 <p>
     This is presented in the popup window.
@@ -195,6 +193,17 @@ Labs introduces a lean single file component (SFC) interface. Every SFC is decla
 A valid SFC file assembles from at most one of the following tags (top-level): `<template>` can contain the component markup. It can be leveraged with [slots](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_templates_and_slots#adding_flexibility_with_slots). `<style>` can contain styles that apply only to the component markup. `<script>` can contain native web component [lifecycle callbacks](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#custom_element_lifecycle_callbacks), and utilize related concepts.
 
 > SFCs work with SCSS and TypeScript by specifiying a `lang` attribute on the respective tag. This is, `<style lang="scss">` or `<script lang="ts">`, respectively.
+
+### Assets
+
+Provide static assets, such as images to the `/assets` directory.
+
+<sub><code>src/newtab/newtab.html</code></sub>
+<sub><code>src/newtab/popup.html</code></sub>
+
+``` html
+<img src="/assets/image.png">
+```
 
 ## Browser & Webfuse APIs
 
