@@ -15,7 +15,7 @@
 3. [**Preview**](#preview)
 4. [**Assets**](#assets)
 5. [**Browser & Webfuse APIs**](#browser--webfuse-apis)
-6. [**Session Integration**](#session-integration)
+6. [**Upload**](#upload)
 7. [**CLI Reference**](#cli-reference)
 8. [**Cheatsheet**](#cheatsheet)
 9. [**Further Reading**](#further-reading)
@@ -200,7 +200,9 @@ The Labs preview environment primarily enables incremental development of the ex
 
 > API mocking is work in progress (Promise APIs, etc.).
 
-## Session Integration
+## Upload
+
+### Webfuse
 
 Follow the [Official Documentation](https://docs.surfly.com/webfuse/extensions/introduction#extension-directory-upload-handling-and-limitations) to install your extension to a Webfuse session. This holds for both use in production, as well as verification with full browser/session capabilities. In a nutshell, this comprises three steps:
 
@@ -209,6 +211,11 @@ Follow the [Official Documentation](https://docs.surfly.com/webfuse/extensions/i
 3. use the upload option.
 
 > Select the `/dist` directory for upload.
+
+### Browser
+
+- [Upload to Chrome](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked)
+- [Upload to Firefox](https://extensionworkshop.com/documentation/publish/package-your-extension)
 
 ## CLI Reference
 
