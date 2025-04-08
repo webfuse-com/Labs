@@ -44,7 +44,7 @@ assertNotIn(`
 `, NEWTAB_HTML, "Popup-only SFC was rendered (newtab.html)");
 
 assertIn(`
-    <strong>My Extension</strong>
+    <img src="/assets/image.png" height="80" />
     <h1>Newtab</h1>
     <p>This is presented in each new tab in a session.</p>
     <sfc-my-component onclick="sayHello()">Say Hello</sfc-my-component>

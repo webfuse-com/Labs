@@ -70,8 +70,9 @@ The scaffolded project resembles the following file structure:
 ```
 .                                       # Extension root directory
 └── /my-extension
-    ├── /dist 🛠️                        # Eventually emitted files, for upload in a session
-    └── /src                            # Source files to edit
+    ├── /assets                         # Static assets
+    │   └── image.png
+    ├── /src                            # Source files to edit
     │   ├── /newtab                     # Newtab target files
     │   │   ├── newtab.html ❕
     │   │   ├── newtab.[css|scss]
@@ -85,6 +86,7 @@ The scaffolded project resembles the following file structure:
     │       │   └── my-component.html
     │       ├── shared.[css|scss]
     │       └── shared.[js|ts]
+    ├── /dist 🛠️                        # Eventually emitted files, for upload in a session
     ├── background.js                   # Background script
     └── content.js                      # Content script
 ```
@@ -108,7 +110,7 @@ Markup is automatically wrapped within proper document syntax. There is hence no
 <sub><code>src/newtab/newtab.html</code></sub>
 
 ``` html
-<strong>My Extension</strong>
+<img src="/assets/image.png">
 <h1>Newtab</h1>
 <p>
     This is presented in each new tab in a session.
