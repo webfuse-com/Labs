@@ -14,7 +14,8 @@
     "bundle": "npm run labs -- bundle --stacktrace",
     "bundle:debug": "npm run bundle -- --debug",
     "bundle:watch": "npm run bundle -- --watch",
-    "preview": "npm run labs -- preview --only",
+    "preview": "npm run labs -- preview --debug --only",
+    "preview:watch": "npm run labs -- preview --debug",
     "test": "npm run bundle:debug && node ./test/test.js"
   },
   "author": "Thassilo M. Schiepanski",

@@ -16,5 +16,6 @@ npx husky
 `npm run bundle:watch` &emsp; Bundle the test extension, watch files.  
 
 `npm run preview` &emsp; Start the preview environment, without bundler.  
+`npm run preview:watch` &emsp; Start the preview environment.  
 
 `npm test` &emsp; Run test suite.  
