@@ -44,7 +44,7 @@ html, body {
 
 html {
     background-color: var(--bg);
-    background: url("/_resources/background.png") no-repeat;
+    background: url("/_assets/background.png") no-repeat;
     background-size: cover;
     color: var(--fg);
     font-family: "Open Sans", Arial, Helvetica, sans-serif;

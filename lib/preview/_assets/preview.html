@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Extension Preview</title>
-        <link rel="stylesheet" href="/_resources/preview.css">
+        <link rel="stylesheet" href="/_assets/preview.css">
         <script>
             console.log("%cWebfuse Labs", "color: rgb(222, 74, 183); font-weight: bold;");
 
@@ -36,6 +36,15 @@
                                 break;
                         }
                     };
+                });
+
+                window.addEventListener("message", e => {
+                    [ "newtab", "popup"]
+                        .forEach(section => {
+                            document.querySelector(`#${section} iframe`)
+                                .contentWindow
+                                .postMessage(e.data, "*");
+                        });
                 });
         </script>
     </head>
@@ -80,7 +89,7 @@
                     </div>
                 </section>
             </div>
-            <iframe src="/_resources/sandbox.background.html" style="display: none;"></iframe>
+            <iframe src="/_assets/sandbox.background.html" style="display: none;"></iframe>
         </main>
         <footer>&copy; Surfly B.V.</footer>
     </body>

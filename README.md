@@ -207,9 +207,19 @@ Provide static assets, such as images to the `/static` directory.
 
 ## Browser & Webfuse APIs
 
-The Labs preview environment primarily enables incremental development of the extension UI. Extensions do certainly subsist on [Browser APIs](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API), and the [Webfuse API](https://docs.surfly.com/webfuse/extensions/api_reference). API-based functionality, on the other hand, is strongly tied to a browser and session environment. A Labs preview is considered 'flat', i.e. it mocks all relevant APIs, but only for it to exist. Any API call logs a debug message to the console to verify it would have happened.
+The Labs preview environment primarily enables incremental development of the extension UI. Extensions do, certainly, subsist on [Browser APIs](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API), and the [Webfuse API](https://docs.surfly.com/webfuse/extensions/api_reference). API-based functionality, on the other hand, is strongly tied to a browser and session environment.
 
-> API mocking is work in progress (Promise APIs, etc.).
+A Labs preview only mocks what is relevant to an extension's components. Complementary API properties are considered 'dry': They exist for completeness, but a call does nothing but return an empty promise, and log a debug message. 
+
+### Implemented API
+
+| Property Chain | State |
+| :- | :- |
+| `browser.runtime.onMessage.addListener()` | _partial_ |
+| `browser.runtime.sendMessage()` | _partial_ |
+| `browser.tabs.sendMessage()` | _partial_ |
+
+> API mocking is work in progress.
 
 ## Upload
 

@@ -5,10 +5,17 @@ import { deepEqual, equal } from "assert";
 
 
 /**
+ * Get file path from the test extension's dist directory (by relative path).
+ */
+global._path = name => {
+    return join(import.meta.dirname, "../test-extension/dist/", name);
+};
+
+/**
  * Read a from the test extension's dist directory (by relative path).
  */
-global._readDist = (name) => {
-    return readFileSync(join(import.meta.dirname, "../test-extension/dist/", name)).toString();
+global._readDist = name => {
+    return readFileSync(global._path(name)).toString();
 };
 
 /**
@@ -32,6 +39,7 @@ const assertIn = (actualPartial, expected, message, preserveWhitespace = false, 
         equal(stripWhitespace(expected).includes(stripWhitespace(actualPartial)), isIn);
     }, message);
 };
+
 global.assertIn = (actualPartial, expected, message, preserveWhitespace) => {
     assertIn(actualPartial, expected, message, preserveWhitespace, true);
 };
