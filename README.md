@@ -13,7 +13,7 @@
 1. [**Prerequisites**](#prerequisites)
 2. [**Installation**](#installation)
 3. [**Preview**](#preview)
-4. [**Resources**](#Resources)
+4. [**Assets**](#assets)
 5. [**Browser & Webfuse APIs**](#browser--webfuse-apis)
 6. [**Upload**](#upload)
 7. [**CLI Reference**](#cli-reference)
@@ -63,15 +63,14 @@ The preview app is a browser application. Open the address that is printed to th
 
 > `labs` commands that affect a specific extension work in its root directory. With other words, the current working directory (`pwd`) needs to correspond to the extensions project's root directory.
 
-## Resources
+## Assets
 
 The scaffolded project resembles the following file structure:
 
 ```
 .                                       # Extension root directory
 └── /my-extension
-    ├── /assets                         # Static assets
-    │   └── image.png
+    ├── /dist 🛠️                        # Eventually emitted files, for upload in a session
     ├── /src                            # Source files to edit
     │   ├── /newtab                     # Newtab target files
     │   │   ├── newtab.html ❕
@@ -86,7 +85,8 @@ The scaffolded project resembles the following file structure:
     │       │   └── my-component.html
     │       ├── shared.[css|scss]
     │       └── shared.[js|ts]
-    ├── /dist 🛠️                        # Eventually emitted files, for upload in a session
+    ├── /static                         # Static assets
+    │   └── image.png
     ├── background.js                   # Background script
     └── content.js                      # Content script
 ```
@@ -194,15 +194,15 @@ A valid SFC file assembles from at most one of the following tags (top-level): `
 
 > SFCs work with SCSS and TypeScript by specifiying a `lang` attribute on the respective tag. This is, `<style lang="scss">` or `<script lang="ts">`, respectively.
 
-### Assets
+### Static Assets
 
-Provide static assets, such as images to the `/assets` directory.
+Provide static assets, such as images to the `/static` directory.
 
 <sub><code>src/newtab/newtab.html</code></sub>
 <sub><code>src/newtab/popup.html</code></sub>
 
 ``` html
-<img src="/assets/image.png">
+<img src="/static/image.png">
 ```
 
 ## Browser & Webfuse APIs

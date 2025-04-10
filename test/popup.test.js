@@ -44,7 +44,7 @@ assertIn(`
 `, POPUP_HTML, "Popup-only SFC not rendered (popup.html)");
 
 assertIn(`
-    <img src="/assets/image.png" height="40" />
+    <img src="/static/image.png" height="40" />
     <h1>Popup</h1>
     <p>This is presented in the popup window.</p>
     <sfc-my-component onclick="sayHello()">Say Hello</sfc-my-component>
