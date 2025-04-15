@@ -198,11 +198,10 @@ A valid SFC file assembles from at most one of the following tags (top-level): `
 
 Provide static assets, such as images to the `/static` directory.
 
-<sub><code>src/newtab/newtab.html</code></sub>
-<sub><code>src/newtab/popup.html</code></sub>
+<sub><code>src/popup/popup.html</code></sub>
 
 ``` html
-<img src="/static/image.png">
+<img src="./static/image.png">
 ```
 
 ## Browser & Webfuse APIs
