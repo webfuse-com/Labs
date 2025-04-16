@@ -16,7 +16,8 @@
     "bundle:watch": "npm run bundle -- --watch",
     "preview": "npm run labs -- preview --debug --only",
     "preview:watch": "npm run labs -- preview --debug",
-    "test": "npm run bundle:debug && node ./test/test.js"
+    "test": "npm run bundle:debug && node ./test/test.js",
+    "release": "node ./bump.js"
   },
   "author": "Thassilo M. Schiepanski",
   "dependencies": {
