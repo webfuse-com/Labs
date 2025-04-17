@@ -1,7 +1,8 @@
 import { readFileSync } from "fs";
-import { readdir } from "fs/promises";
 import { join } from "path";
 import { deepEqual, equal } from "assert";
+
+import { catchError, runSuite } from "./suite.js";
 
 
 /**
@@ -49,43 +50,5 @@ global.assertNotIn = (actualPartial, expected, message, preserveWhitespace) => {
 };
 
 
-/**
- * Print test case failure in a neat way.
- * Print trace to test case.
- */
-const catchError = (assertion, errorMessage) => {
-    const trace = (
-        ((new Error()).stack ?? "")
-            .split(/\n/g)
-            .filter(line => /\.test\.js/.test(line))
-            .shift()
-        ?? "")
-            .split(/\s+/)
-            .pop()
-            .replace(/^file:\/\//, "")
-            .replace(/\)$/, "");
-
-    try { assertion() } catch(err) {
-        console.error([
-            `\x1b[1m\x1b[31mFailed Assertion\x1b[0m ${errorMessage ?? ""}`,
-            `\x1b[2mat \x1b[22m${trace}\x1b[2m:\x1b[0m`,
-            `\x1b[2mExpected: \x1b[36m${err.expected.toString()}\x1b[0m`,
-            `\x1b[2mActual:\x1b[0m   \x1b[1m\x1b[36m${err.actual.toString()}\x1b[0m`,
-            ""
-        ].join("\n"));
-
-        process.exit(1);
-    }
-};
-
-
-console.log("");
-(await readdir(import.meta.dirname, {
-    withFileTypes: true
-}))
-    .filter(dirent => dirent.isFile() && /\.test\.js/.test(dirent.name))
-    .forEach(async dirent => {
-        await import(join(dirent.parentPath, dirent.name));
-
-        console.log(`\x1b[2m/test/${dirent.name}...\x1b[22m \x1b[1m\x1b[32mdone\x1b[0m`);
-    });
+// Run suite
+runSuite("unit");

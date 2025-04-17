@@ -16,7 +16,10 @@
     "bundle:watch": "npm run bundle -- --watch",
     "preview": "npm run labs -- preview --debug --only",
     "preview:watch": "npm run labs -- preview --debug",
-    "test": "npm run bundle:debug && node ./test/test.js",
+    "test:unit": "node ./test/test.unit.js",
+    "test:end-to-end": "node ./test/test.end-to-end.js --headless",
+    "test:end-to-end:no-headless": "node ./test/test.end-to-end.js",
+    "test": "npm run bundle:debug && npm run test:unit && npm run test:end-to-end",
     "release": "node ./bump.js"
   },
   "author": "Thassilo M. Schiepanski",
@@ -31,6 +34,7 @@
     "ws": "^8.18.1"
   },
   "devDependencies": {
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "puppeteer": "^24.6.1"
   }
 }
