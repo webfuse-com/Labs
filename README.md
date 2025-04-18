@@ -7,7 +7,7 @@
 **Labs** is a framework that facilitates web extension development: Build with a bundler made for extensions, in a local preview environment. It supports Typescript and SCSS out-of-the-box, and also [Vue](https://vuejs.org/guide/scaling-up/sfc.html)-inspired single file components. Imagine [Vite](https://vite.dev), but for extensions.
 
 <p align="center">
-  <a href="#browser-webfuse-api" target="_blank"><img src="./.github/figure-2.png" alt="Labs' features: Bundler, SFCs, and Preview" width="700"></a>
+  <a href="#browser-webfuse-api" target="_blank"><img src="./.github/figure-1.png" alt="Labs' features: Bundler, SFCs, and Preview" width="675"></a>
 </p>
 
 1. [**Prerequisites**](#prerequisites)
@@ -59,7 +59,7 @@ labs preview
 
 The preview app is a browser application. Open the address that is printed to the console in a web browser. The preview environment implements hot module replacement. This is, the provided UI always presents the latest bundle.
 
-<a href="#local-development" target="_blank"><img src="./.github/figure-1.png" alt="Webfuse Labs Preview Environment"></a>
+<a href="#local-development" target="_blank"><img src="./.github/figure-2.png" alt="Webfuse Labs Preview Environment"></a>
 
 > `labs` commands that affect a specific extension work in its root directory. With other words, the current working directory (`pwd`) needs to correspond to the extensions project's root directory.
 
