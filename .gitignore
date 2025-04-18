@@ -1,9 +1,10 @@
-.DS_Store
-
 node_modules/
 
 test-extension/dist/
 
+.DS_Store
 package-lock.json
+tsconfig.dev.tsbuildinfo
+*.js.map
 
 .tmp

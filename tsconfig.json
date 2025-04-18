@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ES2022",        
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "resolveJsonModule": true,
+    "noEmitOnError": true,
+    "allowJs": true,
+    "declaration": false,
+    "rootDir": "./src",
+    "outDir": "./lib"
+  },
+  "include": [
+    "./src/**/*.json",
+    "./src/**/*.js",
+    "./src/**/*.ts"
+  ]
+}

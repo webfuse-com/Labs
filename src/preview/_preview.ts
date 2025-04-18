@@ -1,12 +1,23 @@
+/**
+ * Preview handler module.
+ * Command invokes preview().
+ * Spins up the preview enviornment, which is a locally served web app.
+ */
+
 import { existsSync } from "fs";
 import { readFile } from "fs/promises";
 import { join, extname } from "path";
 import { createServer } from "http";
+
 import { WebSocketServer } from "ws";
+
 import { DIST_PATH } from "../constants.js";
 import { getAssetPath } from "../assets.js";
+
 import _config from "./config.json" with { type: "json" };
-const MIME = {
+
+
+const MIME: Record<string, string> = {
     ".aac": "audio/aac",
     ".css": "text/css",
     ".gif": "image/gif",
@@ -27,20 +38,39 @@ const MIME = {
     ".webp": "image/webp",
     ".xml": "application/xml"
 };
-const readDoc = (path, rootPath = join(import.meta.dirname)) => {
-    const absolutePath = join(rootPath, path);
+
+/**
+ * Read data from a file to serve in preview.
+ */
+const readDoc = (path: string, rootPath = join(import.meta.dirname)): Promise<null|string> => {
+    const absolutePath: string = join(rootPath, path);
     return existsSync(absolutePath)
-        ? readFile(absolutePath)
+        ? (readFile(absolutePath) as unknown as Promise<string>)
         : null;
-};
-const injectPriorityScript = (markup, src) => {
+}
+
+/**
+ * Inject a script tag with a given src at the top of a document's inner head.
+ * Required with script scope constraints.
+ * For instance, the content script is injected to newtab.html (only).
+ * The mock API script, on the other hand, is injected into any document.
+ */
+const injectPriorityScript = (markup: string, src: string) => {
     return markup
         .replace(/(<head[^>]*>(\n? *))/i, `$1<script src="${src}"></script>$2`);
-};
-function createHTTPServer(port) {
+}
+
+
+/**
+ * Spin up the HTTP server for the preview app.
+ */
+function createHTTPServer(port: number) : Promise<void>{
     return new Promise(resolve => {
         createServer(async (req, res) => {
-            const routes = {
+            const routes: Record<string, {
+                data: string;
+                mime: string;
+            }> = {
                 "/": {
                     data: await readDoc("preview.html", getAssetPath("preview", "./_assets/")),
                     mime: "text/html"
@@ -58,55 +88,73 @@ function createHTTPServer(port) {
                     mime: "text/javascript"
                 }
             };
-            const end = (data, mime = "text/html", status = 200) => {
+
+            const end = (data: string, mime = "text/html", status = 200) => {
                 res.statusCode = status;
                 res.setHeader("Content-Type", mime);
                 res.end(data);
             };
+
             try {
-                if (routes[req.url])
-                    return end(routes[req.url].data, routes[req.url].mime);
+                if(routes[req.url])
+                    return end(routes[req.url].data as string, routes[req.url].mime);
+
                 const assetFile = await readDoc(req.url, getAssetPath("preview", "."));
-                if (assetFile)
+                if(assetFile)
                     return end(assetFile, MIME[extname(req.url)]);
+
                 let distFile = await readDoc(req.url, DIST_PATH);
-                if (!distFile)
+                if(!distFile)
                     return end(await readDoc("404.html"), null, 404);
-                if (["/newtab.html", "/popup.html"].includes(req.url)) {
+
+                if([ "/newtab.html", "/popup.html" ].includes(req.url)) {
                     distFile = distFile.toString();
-                    if (["/newtab.html"].includes(req.url)) {
+                    if([ "/newtab.html" ].includes(req.url)) {
                         distFile = injectPriorityScript(distFile, "/content.js");
                         distFile = injectPriorityScript(distFile, "/_assets/api/mock.content.js");
-                    }
-                    else {
+                    } else {
                         distFile = injectPriorityScript(distFile, "/_assets/api/mock.other.js");
                     }
                     distFile = injectPriorityScript(distFile, "/_assets/api/mock.js");
                 }
                 return end(distFile, MIME[extname(req.url)]);
-            }
-            catch (err) {
+            } catch(err) {
                 end(null, null, 500);
+
                 console.error(err);
             }
         })
             .listen(port, () => resolve());
     });
 }
-function createWSServer(port) {
+
+/**
+ * Spin up the websocket server for the preview app.
+ * Enables hot module replacement within all active preview clients.
+ * Returns an interface to push a refresh request to each connected client.
+ */
+function createWSServer(port: number) {
     const wss = new WebSocketServer({ port });
     wss.on("connection", ws => {
         ws.on("error", console.error);
         ws.send("init");
+
         ws.on("message", msg => {
             console.log(msg);
         });
     });
+
     return {
         push: () => wss.clients
             .forEach(client => client.send("reload"))
     };
 }
+
+
+/**
+ * CLI command handler interface.
+ * Invoked from entry module.
+ */
 export async function preview() {
     return {
         http: {

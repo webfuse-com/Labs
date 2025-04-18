@@ -16,6 +16,10 @@ const _config = {
 // Change to test extension directory and spin up preview
 process.chdir(join(import.meta.dirname, "../test-extension"));
 await (await import("../lib/preview/_preview.js")).preview();
+console.log("\x1b[2mPreview application running...\x1b[0m");
+process.on("exit", () => {
+    console.log("\x1b[2mPreview application terminated.\x1b[0m");
+});
 
 
 // Start actual browser for user end tests
@@ -26,7 +30,9 @@ const browser = await puppeteer.launch({
 });
 
 const page = (await browser.pages())[0];
-await page.goto("http://localhost:5000");
+const pageRes = await page.goto("http://localhost:5000");
+if(pageRes.status() !== 200)
+    throw new ReferenceError("Preview not available");
 await page.setViewport({ width: _config.width, height: _config.height });
 
 
@@ -34,10 +40,11 @@ let openCases = 0;
 let terminationTimeout;
 const extendTerminationTimeout = (ms = _config.terminationTimeoutMs) => {
     clearTimeout(terminationTimeout);
-    setTimeout(() => {
+    terminationTimeout = setTimeout(() => {
         console.error("Test suite timed out");
+
         process.exit(openCases ? 1 : 0);
-    }, ms);
+    }, openCases ? ms : 500);
 };
 
 
@@ -77,43 +84,6 @@ global.assertAttr = (selector, attrName, attrValue, message) => {
         const value = await page.evaluate(`document.querySelector("${selector}").getAttribute("${attrName}")`);
         equal(value, attrValue);
     }, message);
-};
-
-global.assertTabs = (count, message) => {
-    wrapCase(async () => {
-        equal((await browser.pages()).length, count);
-    }, message);
-};
-
-/**
- * Perform an action sequence in the page.
- * This is, dispatch interaction events on elements (e.g. a click()).
- * Each completed seuqence is followed by a page reload to reset its state.
- */
-const sequenceAPI = {
-    _click: targetSelector => {
-        return new Promise(async resolve => {
-            await page.evaluate(`document.querySelector("${targetSelector}").click()`);
-
-            setTimeout(resolve, 250);
-        });
-    }
-};
-
-global._sequence = async cb => {
-    extendTerminationTimeout();
-
-    await new Promise(resolve => {
-        setTimeout(async () => {
-            await cb(sequenceAPI);
-
-            setImmediate(async () => {
-                await page.reload();
-
-                resolve();
-            });
-        }, 50);
-    });
 };
 
 

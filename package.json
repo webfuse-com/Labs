@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "type": "module",
   "files": [
+    "./assets",
+    "./cli.help.txt",
     "./lib"
   ],
   "bin": {
@@ -16,10 +18,14 @@
     "bundle:watch": "npm run bundle -- --watch",
     "preview": "npm run labs -- preview --debug --only",
     "preview:watch": "npm run labs -- preview --debug",
+    "develop": "npx tsc --project ./tsconfig.dev.json",
+    "develop:watch": "npm run develop -- --watch",
+    "compile": "rm -rf ./lib && npx tsc --project ./tsconfig.lib.json",
+    "prepare:test": "npm run compile && npm run bundle:debug",
     "test:unit": "node ./test/test.unit.js",
     "test:end-to-end": "node ./test/test.end-to-end.js --headless",
     "test:end-to-end:no-headless": "node ./test/test.end-to-end.js",
-    "test": "npm run bundle:debug && npm run test:unit && npm run test:end-to-end",
+    "test": "npm run test:unit && npm run test:end-to-end",
     "release": "node ./bump.js"
   },
   "author": "Thassilo M. Schiepanski",
@@ -29,12 +35,16 @@
     "node-html-parser": "^7.0.1",
     "prettier": "^3.5.3",
     "sass": "^1.86.0",
-    "typescript": "^5.8.2",
     "uglify-js": "^3.19.3",
     "ws": "^8.18.1"
   },
   "devDependencies": {
+    "@types/clean-css": "^4.2.11",
+    "@types/html-minifier": "^4.0.5",
+    "@types/uglify-js": "^3.17.5",
+    "@types/ws": "^8.18.1",
     "husky": "^9.1.7",
-    "puppeteer": "^24.6.1"
+    "puppeteer": "^24.6.1",
+    "typescript": "^5.8.3"
   }
 }
