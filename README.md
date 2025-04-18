@@ -269,7 +269,12 @@ Spin up the preview environment.
 
 `--only` &emsp; Just serve preview, without implicit bundle (watch)  
 
+#### `update`
+
+Update Labs to the latest version.
+
 > Use the `help` command to display usage description in the CLI.
+
 ## Cheatsheet
 
 **Setup:**

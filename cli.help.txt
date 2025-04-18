@@ -8,6 +8,7 @@ Usage: labs <command> [--<arg> [<option>]?]*
   --watch, -W    Watch files for incremental builds
 • preview        Spin up the preview environment.
   --only         Just serve preview, without implicit bundle (watch)
+• update         Update Labs to the latest version.
 
   --stacktrace   Print stacktrace of non-recoverable exceptions
   --working-dir  Specify working, i.e. extension directory [./]

@@ -13,21 +13,16 @@ import HTMLMinifier from "html-minifier";
 import CSSMinifier from "clean-css";
 import JSMinifier from "uglify-js";
 
-import { ROOT_PATH, SRC_PATH, DIST_PATH, TARGET_DIRS, STATIC_PATH, STATIC_DIR } from "../constants.js";
+import { SRC_PATH, DIST_PATH, TARGET_DIRS, STATIC_PATH, STATIC_DIR } from "../constants.js";
 import { load as loadTemplate, template } from "./templates.js";
 import { TSfc, renderComponents } from "./sfc.js";
 
+import { TPackageJson, getPackage } from "../package.js";
 import { getAssetPath } from "../assets.js";
 import manifest from "./manifest.json" with { type: "json" };
 import EventEmitter from "events";
 import { Modifier, Bundler } from "./Mappers.js";
 import { transpileSCSS, transpileTS } from "./transpilers.js";
-
-
-type TPackageJson= {
-	name?: string;
-	version?: string;
-};
 
 
 const WATCH_INTERVAL: number = 1000;
@@ -111,18 +106,6 @@ const bundlerTS = new Bundler((ts, debug) => {
 	return minifierJS.apply(transpileTS(ts), debug);
 });
 
-
-/**
- * Get the extensions package.json contents as object.
- */
-const getPackage = async (): Promise<TPackageJson> => {
-	const packageJsonPath = join(ROOT_PATH, "package.json");
-	return existsSync(packageJsonPath)
-		? (
-			(await import(packageJsonPath, { with: { type: "json" } })) as unknown as { default: TPackageJson }
-		).default
-		: {};
-}
 
 
 const readGlobal = async (ext: string) => {
