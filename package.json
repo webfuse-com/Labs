@@ -8,8 +8,8 @@
     "./lib"
   ],
   "bin": {
-    "labs": "./lib/cli.js",
-    "webfuse-labs": "./lib/cli.js"
+    "labs": "./lib/_cli.js",
+    "webfuse-labs": "./lib/_cli.js"
   },
   "scripts": {
     "labs": "cd ./test-extension && ../labs",
