@@ -21,6 +21,8 @@
     "develop": "npx tsc --project ./tsconfig.dev.json",
     "develop:watch": "npm run develop -- --watch",
     "compile": "rm -rf ./lib && npx tsc --project ./tsconfig.lib.json",
+    "lint": "npx eslint ./src/**/*",
+    "lint:fix": "npm run lint -- --fix",
     "prepare:test": "npm run compile && npm run bundle:debug",
     "test:unit": "node ./test/test.unit.js",
     "test:end-to-end": "node ./test/test.end-to-end.js --headless",
@@ -43,8 +45,13 @@
     "@types/html-minifier": "^4.0.5",
     "@types/uglify-js": "^3.17.5",
     "@types/ws": "^8.18.1",
+    "@typescript-eslint/eslint-plugin": "^8.30.1",
+    "@typescript-eslint/parser": "^8.30.1",
+    "eslint": "^9.24.0",
+    "eslint-plugin-typescript": "^0.14.0",
     "husky": "^9.1.7",
     "puppeteer": "^24.6.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.30.1"
   }
 }
