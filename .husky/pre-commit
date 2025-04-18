@@ -1,4 +1,5 @@
-npm run lint:fix
+npx lint-staged
+
 npm run compile
 npm run bundle:debug
 npm test
