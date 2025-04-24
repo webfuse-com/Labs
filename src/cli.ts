@@ -12,7 +12,7 @@ import { join, normalize } from "path";
 import { ROOT_PATH, SRC_DIR } from "./constants.js";
 import { hasFlag, parseOption, parsePositional } from "./args.js";
 import { isGloballyInstalled, retrieveAvailableUpdate, TUpdateInfo } from "./check-update.js";
-import { bundle } from "./bundle/_bundle.js";
+import { bundle, TBundleResults } from "./bundle/_bundle.js";
 import { create } from "./create/_create.js";
 import { preview } from "./preview/_preview.js";
 import { update } from "./update/_update.js";
@@ -104,7 +104,7 @@ const cmdBundle = async (cb = (() => {})) => {
 
 	const emitter = await bundle(hasFlag("debug", "D"));
 
-	emitter.on("bundle", stats => {
+	emitter.on("bundle", (stats: TBundleResults) => {
 		const normalizePath = (path: string): string => {
 			path = normalize(path);
 			return normalize(path.slice(normalize(process.cwd()).length));
@@ -127,7 +127,7 @@ switch(cmd) {
 		console.log(
 			readFileSync(join(import.meta.dirname, "../cli.help.txt")).toString()
                 .replace(/(Webfuse|Labs)/g, "\x1b[1m$1\x1b[0m")
-                .replace(/(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))/g, "\x1b[38;2;222;74;183m$1\x1b[0m")
+                .replace(/(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*))/g, "\x1b[38;2;222;74;183m$1\x1b[0m")
 		);
 		break;
 	}
@@ -167,7 +167,7 @@ switch(cmd) {
 		print(
 			!installedUpdate
 				? "No update available at the moment."
-				: `Successfully installed Labs v${installedUpdate.latest}.`
+				: `Successfully installed Labs v${installedUpdate.latest.string}.`
 		);
 
 		break;

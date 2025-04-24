@@ -126,6 +126,14 @@ const globals: Record<string, string> = {
 const sfcGlobal = await renderComponents(getAssetPath("bundle", "globals/components"), "webfuse-");
 
 
+export type TBundleResults = {
+	src: string;
+	dist: string;
+	count: number;
+	ms: string;
+};
+
+
 /**
  * Clean up by deleting the current bundle (/dist directory).
  */
@@ -142,7 +150,7 @@ function cleanUp() {
  * Emit the bundle from all relevant files in the extension directory.
  * Called from handler interface, which in turn contains one-time calls.
  */
-async function bundleAll(debug: boolean = false) {
+async function bundleAll(debug: boolean = false): Promise<TBundleResults> {
 	const t0 = performance.now();
 
 	await bundlerTS.apply("background.ts", undefined, debug);
@@ -193,7 +201,7 @@ async function bundleAll(debug: boolean = false) {
  * CLI command handler interface.
  * Invoked from entry module.
  */
-export async function bundle(debug?: boolean) {
+export async function bundle(debug?: boolean): Promise<EventEmitter> {
 	cleanUp();
 
 	existsSync(STATIC_PATH)
