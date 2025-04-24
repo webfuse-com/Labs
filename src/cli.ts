@@ -11,7 +11,7 @@ import { join, normalize } from "path";
 
 import { ROOT_PATH, SRC_DIR } from "./constants.js";
 import { hasFlag, parseOption, parsePositional } from "./args.js";
-import { retrieveAvailableUpdate, TUpdateInfo } from "./check-update.js";
+import { isGloballyInstalled, retrieveAvailableUpdate, TUpdateInfo } from "./check-update.js";
 import { bundle } from "./bundle/_bundle.js";
 import { create } from "./create/_create.js";
 import { preview } from "./preview/_preview.js";
@@ -37,14 +37,25 @@ process.on("unhandledRejection", printError);
 /**
  * Uniform log interface. Prints with a leading timestamp, in primary color.
  */
-const print = (message: string, replaceLastLine: boolean = false, subtle: boolean = false) => {
+const print = (
+	message: string,
+	replaceLastLine: boolean = false,
+	subtle: boolean = false,
+	noTimestamp: boolean = false
+) => {
 	console.log(`${
 		replaceLastLine ? `\x1b[1A\x1b[2K` : ""
-	}\x1b[2m[${new Date().toLocaleString(
-		Intl.DateTimeFormat().resolvedOptions().locale, {
-			hour: "numeric", minute: "numeric", second: "numeric"
-		}
-	)}]\x1b[0m ${
+	}\x1b[2m${
+		!noTimestamp
+			? `[${
+				new Date().toLocaleString(
+					Intl.DateTimeFormat().resolvedOptions().locale, {
+						hour: "numeric", minute: "numeric", second: "numeric"
+					}
+				)
+			}] `
+			: ""
+	}\x1b[0m${
 		!subtle ? "\x1b[38;2;222;74;183m" : ""
 	}${
 		message
@@ -52,15 +63,22 @@ const print = (message: string, replaceLastLine: boolean = false, subtle: boolea
 };
 
 
-const availableUpdate = await retrieveAvailableUpdate();
-if(availableUpdate) {
-	print(`A new version of Labs is available \x1b[2m${availableUpdate.current} → ${availableUpdate.latest}\x1b[22m (re-install to update).`, false, true);
-}
-
-
 const cmd = parsePositional(0);
 if(!cmd)
 	throw new SyntaxError("Missing command. Run command 'help' for a list of available commands.");
+
+
+const availableUpdate = await retrieveAvailableUpdate();
+if(
+	isGloballyInstalled()
+	&& availableUpdate.current.number < availableUpdate.latest.number
+) {
+	print(`A new version of Labs is available \x1b[2m${
+		availableUpdate.current.string
+	} → ${
+		availableUpdate.latest.string
+	}\x1b[22m (re-install to update).`, false, true);
+}
 
 
 /**
@@ -113,6 +131,10 @@ switch(cmd) {
 		);
 		break;
 	}
+	case "version": {
+		print(availableUpdate.current.string, false, false, true);
+		break;
+	}
 	case "create": {
 		const emitPath: string = await create(parseOption("path", "P"));
 		print(`Created extension project blueprint at \x1b[1m${emitPath}\x1b[22m.`);
@@ -124,6 +146,7 @@ switch(cmd) {
 
 		(await cmdBundle())
             .once("bundle", () => !hasFlag("watch", "W") && process.exit(0));
+
 		break;
 	}
 	case "preview": {

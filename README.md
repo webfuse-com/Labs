@@ -250,18 +250,18 @@ labs <command> [--<argument> [<option>]?]*
 
 ### Commands
 
-#### `create`
-
-Create an extension project blueprint.
-
-`--path`, `-P` &emsp; Path to create blueprint at &emsp; `./my-extension`  
-
 #### `bundle`
 
 Bundle and emit extension source files.
 
 `--debug`, `-D` &emsp; Skip minification of emitted files  
 `--watch`, `-W` &emsp; Watch files for incremental builds  
+
+#### `create`
+
+Create an extension project blueprint.
+
+`--path`, `-P` &emsp; Path to create blueprint at &emsp; `./my-extension`  
 
 #### `preview`
 
@@ -272,6 +272,10 @@ Spin up the preview environment.
 #### `update`
 
 Update Labs to the latest version.
+
+#### `version`
+
+Print the currently installed version of Labs.
 
 > Use the `help` command to display usage description in the CLI.
 

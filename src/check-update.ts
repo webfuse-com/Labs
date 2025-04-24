@@ -7,9 +7,14 @@ import { readFileSync, writeFileSync } from "fs";
 import { get } from "https";
 
 
+type TResolveInterface = {
+	string: string;
+	number: number;
+};
+
 export type TUpdateInfo = {
-    current: string;
-    latest: string;
+    current: TResolveInterface;
+    latest: TResolveInterface;
 };
 
 
@@ -22,7 +27,7 @@ function fetchCurrentVersion(): Promise<string> {
 	return new Promise(async resolve => {
 		const packageModule: {
             default: { version: string; }
-        } = await import(join(import.meta.dirname, "../package.json"));
+        } = await import(join(import.meta.dirname, "../package.json"), { with: { type: "json" } });
 		const packageJson = packageModule.default;
 
 		resolve(packageJson.version);
@@ -45,12 +50,7 @@ function fetchLatestVersion(): Promise<string> {
 	});
 }
 
-export async function retrieveAvailableUpdate(): Promise<null|TUpdateInfo> {
-	const binPath: string = process.argv[1];
-	if(!/^\/usr\//.test(binPath) || !/\/bin\//.test(binPath)) {
-		return null;
-	}
-
+export async function retrieveAvailableUpdate(): Promise<TUpdateInfo> {
 	try {
 		const lastCheckTimestamp = parseInt(readFileSync(TEMP_FILE).toString());
 		if(Date.now() - lastCheckTimestamp <= CHECK_INTERVAL) return null;
@@ -58,19 +58,24 @@ export async function retrieveAvailableUpdate(): Promise<null|TUpdateInfo> {
 
 	writeFileSync(TEMP_FILE, Date.now().toString());
 
-	const numerifySemver = (semver: string): number => parseInt(semver.match(/\d+/g).join(""));
+	const resolveInterface = (semver: string): TResolveInterface => {
+		return {
+			string: semver,
+			number: parseInt(semver.match(/\d+/g).join(""))
+		};
+	};
 
-	try {
-		const currentVersion: string = await fetchCurrentVersion();
-		const latestVersion: string = await fetchLatestVersion();
+	const currentVersion: string = await fetchCurrentVersion();
+	const latestVersion: string = await fetchLatestVersion();
 
-		return (numerifySemver(currentVersion) < numerifySemver(latestVersion))
-			? {
-				current: currentVersion,
-				latest: latestVersion
-			}
-			: null;
-	} catch {
-		return null;
-	}
+	return {
+		current: resolveInterface(currentVersion),
+		latest: resolveInterface(latestVersion)
+	};
+}
+
+export function isGloballyInstalled(): boolean {
+	const binPath: string = process.argv[1];
+
+	return /^\/usr\//.test(binPath) && /\/bin\//.test(binPath);
 }
