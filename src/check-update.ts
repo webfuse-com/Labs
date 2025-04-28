@@ -10,7 +10,7 @@ import { get } from "https";
 
 type TResolveInterface = {
 	string: string;
-	number: number;
+	number: [ number, number, number ];
 };
 
 export type TUpdateInfo = {
@@ -54,27 +54,40 @@ function fetchLatestVersion(): Promise<string> {
 }
 
 export async function retrieveAvailableUpdate(): Promise<TUpdateInfo> {
-	try {
-		const lastCheckTimestamp = parseInt(readFileSync(TEMP_FILE).toString());
-		if(Date.now() - lastCheckTimestamp <= CHECK_INTERVAL) return null;
-	} catch {}
-
-	writeFileSync(TEMP_FILE, Date.now().toString());
-
 	const resolveInterface = (semver: string): TResolveInterface => {
 		return {
 			string: semver,
-			number: parseInt(semver.match(/\d+/g).join(""))
+			number: semver.match(/\d+/g).map((digit: string) => parseInt(digit)) as [ number, number, number ]
 		};
 	};
 
 	const currentVersion: string = await fetchCurrentVersion();
 	const latestVersion: string = await fetchLatestVersion();
 
-	return {
+	const info = {
 		current: resolveInterface(currentVersion),
 		latest: resolveInterface(latestVersion)
 	};
+
+	try {
+		const lastCheckTimestamp = parseInt(readFileSync(TEMP_FILE).toString());
+		if(Date.now() - lastCheckTimestamp <= CHECK_INTERVAL) return info;
+	} catch {}
+
+	writeFileSync(TEMP_FILE, Date.now().toString());
+
+	return info;
+}
+
+export async function updateAvailable(): Promise<TUpdateInfo> {
+	const availableUpdate = await retrieveAvailableUpdate();
+
+	return availableUpdate.latest.number
+			.reduce((isOutdated: boolean, versionSegment: number, i: number) => {
+				return isOutdated || (versionSegment > availableUpdate.current.number[i]);
+			}, false)	// forward-only history
+		? availableUpdate
+		: null;
 }
 
 export function isGloballyInstalled(): boolean {

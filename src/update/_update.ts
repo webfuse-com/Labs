@@ -6,7 +6,7 @@
 
 import { execSync, spawnSync } from "child_process";
 
-import { TUpdateInfo, retrieveAvailableUpdate } from "../check-update.js";
+import { TUpdateInfo, updateAvailable } from "../check-update.js";
 import { TPackageJson, getPackage } from "../package.js";
 
 
@@ -26,11 +26,9 @@ function installUpdate(globally = false) {
  * Invoked from entry module.
  */
 export async function update(): Promise<null|TUpdateInfo> {
-	const availableUpdate = await retrieveAvailableUpdate();
+	const availableUpdate = await updateAvailable();
 
-	if(!availableUpdate) {
-		return null;
-	}
+	if(!availableUpdate) return null;
 
 	const packageObj: TPackageJson = await getPackage();
 	const globalPackages = execSync("npm list -g --depth 0").toString();

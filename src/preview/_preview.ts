@@ -167,3 +167,51 @@ export async function preview() {
 		}
 	};
 }
+
+
+/*
+
+curl -X 'GET' \
+  'https://surfly.online/api/company/users/' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Token ck_***'
+
+curl -X 'POST' \
+  'https://surfly.online/api/spaces/' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Token ck_***' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "name": "labs-foo",
+  "slug": "labs-foo",
+  "type": "solo",
+  "visibility": "members-only",
+  "access_control": "public",
+  "identification": "anonymous",
+  "queue_enabled": false,
+  "is_paused": false,
+  "host_rights": "everyone",
+  "enable_parallel_sessions": true,
+  "is_landing_page_published": false
+}'
+
+curl -X 'POST' \
+  'https://surfly.online/api/spaces/657/members/' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Token ck_***' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "space": 657,
+  "member": 87,
+  "role": "admin"
+}'
+
+curl -X 'POST' \
+  'https://surfly.online/api/spaces/657/sessions/' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Token rk_***' \
+  -d '{
+  "headless": true
+}'
+
+*/

@@ -11,7 +11,7 @@ import { join, normalize } from "path";
 
 import { ROOT_PATH, SRC_DIR } from "./constants.js";
 import { hasFlag, parseOption, parsePositional } from "./args.js";
-import { isGloballyInstalled, retrieveAvailableUpdate, TUpdateInfo } from "./check-update.js";
+import { TUpdateInfo, isGloballyInstalled, retrieveAvailableUpdate, updateAvailable } from "./check-update.js";
 import { bundle, TBundleResults } from "./bundle/_bundle.js";
 import { create } from "./create/_create.js";
 import { preview } from "./preview/_preview.js";
@@ -69,10 +69,7 @@ if(!cmd)
 
 
 const availableUpdate = await retrieveAvailableUpdate();
-if(
-	isGloballyInstalled()
-	&& availableUpdate.current.number < availableUpdate.latest.number
-) {
+if(isGloballyInstalled() && !!(await updateAvailable())) {
 	print(`A new version of Labs is available \x1b[2m${
 		availableUpdate.current.string
 	} → ${
@@ -129,10 +126,12 @@ switch(cmd) {
                 .replace(/(Webfuse|Labs)/g, "\x1b[1m$1\x1b[0m")
                 .replace(/(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*))/g, "\x1b[38;2;222;74;183m$1\x1b[0m")
 		);
+
 		break;
 	}
 	case "version": {
 		print(availableUpdate.current.string, false, false, true);
+
 		break;
 	}
 	case "create": {
