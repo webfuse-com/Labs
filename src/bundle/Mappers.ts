@@ -80,11 +80,13 @@ export class Bundler {
 			throw new ReferenceError(`Missing file ${srcPath}`);
 		}
 
-		if(!force && !(await Bundler.fileModified(absoluteSrcPath))) return;
+		if(!force && !(await Bundler.fileModified(absoluteSrcPath))) return false;
 
 		const srcContents: Buffer = await readFile(absoluteSrcPath);
 		const distContents: string = await this.#cb(srcContents.toString(), debug, ...args);
 
 		await Bundler.emit(distPath, distContents);
+
+		return true;
 	}
 }

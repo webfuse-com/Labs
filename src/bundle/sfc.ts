@@ -95,7 +95,7 @@ function render(tagName: string, component: string) {
 /**
  * Render all components in an asset directories /components directory.
  */
-export async function renderComponents(srcPath: string, prefix = _config.tagNamePrefix) {
+export async function renderComponents(srcPath: string, force: boolean = false, prefix = _config.tagNamePrefix) {
 	let wasModified: boolean = false;
 
 	const wrapResults = (data: string[]): TSfc => {
@@ -115,7 +115,7 @@ export async function renderComponents(srcPath: string, prefix = _config.tagName
         .map(async (dirent: Dirent) => {
         	const componentPath: string = join(srcPath, dirent.name);
 
-        	if(!(await Bundler.fileModified(componentPath)))
+        	if(!force && !(await Bundler.fileModified(componentPath)))
         		return cache.get(componentPath);
 
         	const data: string = render(

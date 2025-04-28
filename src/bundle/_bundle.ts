@@ -123,7 +123,7 @@ const globals: Record<string, string> = {
  * Global SFCs data.
  * Provides Webfuse components that can be reused across extensions for a consist UI.
  */
-const sfcGlobal = await renderComponents(getAssetPath("bundle", "globals/components"), "webfuse-");
+const sfcGlobal = await renderComponents(getAssetPath("bundle", "globals/components"), false, "webfuse-");
 
 
 export type TBundleResults = {
@@ -159,18 +159,18 @@ async function bundleAll(debug: boolean = false): Promise<TBundleResults> {
 	await bundlerJS.apply("content.js", undefined, debug);    // prefer .js over .ts
 
 	await bundlerTS.apply("shared/shared.ts", "shared.js", debug);
-	await bundlerJS.apply("shared/shared.js", "shared.js", debug);      // prefer .js over .ts
-	await bundlerSCSS.apply("shared/shared.scss", "shared.css", debug);
-	await bundlerCSS.apply("shared/shared.css", "shared.css", debug);   // prefer .css over .scss
+	await bundlerJS.apply("shared/shared.js", "shared.js", debug);      													// prefer .js over .ts
+	let forceComponentRender = await bundlerSCSS.apply("shared/shared.scss", "shared.css", debug);
+	    forceComponentRender = await bundlerCSS.apply("shared/shared.css", "shared.css", debug) || forceComponentRender;	// prefer .css over .scss
 
-	const sfcShared = await renderComponents(join(SRC_PATH, "shared/components"));
+	const sfcShared = await renderComponents(join(SRC_PATH, "shared/components"), forceComponentRender);
 
 	await Promise.all(TARGET_DIRS
         .map(async target => {
         	const getSrcPath = (ext: string) => [ join(target, target), ext ].join(".");
         	const getDistPath = (ext: string) => [ target, ext ].join(".");
 
-        	const sfc = await renderComponents(join(SRC_PATH, target, "components"), "webfuse-");
+        	const sfc = await renderComponents(join(SRC_PATH, target, "components"), forceComponentRender);
         	const name = (await getPackage()).name ?? "";
 
         	await bundlerHTML

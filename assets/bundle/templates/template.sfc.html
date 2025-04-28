@@ -8,13 +8,13 @@
     window.customElements.define(
         "/* @TAG_NAME */",
         class extends HTMLElement {
-            #shadow;
+            #DOM;
 
             constructor() {
                 super();
 
-                this.#shadow = this.attachShadow({ mode: "closed" });
-                this.#shadow.appendChild(
+                this.#DOM = this.attachShadow({ mode: "closed" });
+                this.#DOM.appendChild(
                     document.querySelector("#t-/* @TEMPLATE_ID */")
                         .content
                         .cloneNode(true)

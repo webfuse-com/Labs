@@ -128,6 +128,8 @@ h1 {
 }
 ```
 
+> Component styles are always scoped in Labs.
+
 ### Script
 
 Scripts evaluate in the respetive target's global (window) scope. Globals declared in the `shared` target script are furthermore accessible from both targets. Scripts can either be encoded with JavaScript (`.js`) or TypeScript (`.ts`).
@@ -190,7 +192,7 @@ Labs introduces a lean single file component (SFC) interface. Every SFC is decla
 <SFC-MY-COMPONENT onclick="sayHello()">Say Hello</SFC-MY-COMPONENT>
 ```
 
-A valid SFC file assembles from at most one of the following tags (top-level): `<template>` can contain the component markup. It can be leveraged with [slots](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_templates_and_slots#adding_flexibility_with_slots). `<style>` can contain styles that apply only to the component markup. `<script>` can contain native web component [lifecycle callbacks](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#custom_element_lifecycle_callbacks), and utilize related concepts.
+A valid SFC file assembles from at most one of the following tags (top-level): `<template>` can contain the component markup. It can be leveraged with [slots](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_templates_and_slots#adding_flexibility_with_slots). `<style>` can contain styles that apply only to the component markup. `<script>` can contain native web component [lifecycle callbacks](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#custom_element_lifecycle_callbacks), and utilize related concepts. A component's DOM object can be accessed through `this.#DOM`.
 
 > SFCs work with SCSS and TypeScript by specifiying a `lang` attribute on the respective tag. This is, `<style lang="scss">` or `<script lang="ts">`, respectively.
 
