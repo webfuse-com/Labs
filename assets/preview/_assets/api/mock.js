@@ -39,7 +39,12 @@ window.browser = {
     })
 };
 
+
+_MOCK.runtime.onMessage.addListener = function(cb) {
+    window.addEventListener("message", e => {
+        cb(e.data.data, e.data.sender);
+    });
+};
+
+
 window.chrome = window.browser;
-
-
-_MOCK.runtime.onMessage = {};

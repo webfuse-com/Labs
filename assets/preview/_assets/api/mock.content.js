@@ -23,14 +23,6 @@ const sender = {
         : {}
 };
 
-_MOCK.runtime.sendMessage = function(_, data) {
-    window.parent.postMessage({
-        data,
-        sender,
-        source: "runtime"
-    }, "*");
-};
-
 _MOCK.tabs.sendMessage = function(_, data) {
     window.parent.postMessage({
         data,

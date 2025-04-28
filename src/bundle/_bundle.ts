@@ -12,6 +12,7 @@ import * as prettier from "prettier";
 import HTMLMinifier from "html-minifier";
 import CSSMinifier from "clean-css";
 import JSMinifier from "uglify-js";
+import sharp from "sharp";
 
 import { SRC_PATH, DIST_PATH, TARGET_DIRS, STATIC_PATH, STATIC_DIR } from "../constants.js";
 import { load as loadTemplate, template } from "./templates.js";
@@ -106,6 +107,29 @@ const bundlerTS = new Bundler((ts, debug) => {
 	return minifierJS.apply(transpileTS(ts), debug);
 });
 
+/**
+ * SVG to PNG icon converter:
+ * 1. Create Sharp object from SVG.
+ * 2. Convert to PNG of respective size (height constraint).
+ */
+const svgToPng = (svg: string, size: number): string => {
+	return sharp(svg)
+		.resize(null, size)
+		.png()
+		.toBuffer() as unknown as string
+};
+const converterSVG_16 = new Bundler(svg => {
+	return svgToPng(svg, 16);
+}, true);
+const converterSVG_32 = new Bundler(svg => {
+	return svgToPng(svg, 32);
+}, true);
+const converterSVG_64 = new Bundler(svg => {
+	return svgToPng(svg, 64);
+}, true);
+const converterSVG_128 = new Bundler(svg => {
+	return svgToPng(svg, 128);
+}, true);
 
 
 const readGlobal = async (ext: string) => {
@@ -152,6 +176,11 @@ function cleanUp() {
  */
 async function bundleAll(debug: boolean = false): Promise<TBundleResults> {
 	const t0 = performance.now();
+
+	await converterSVG_16.apply("icon.svg", "icon/16.png", debug);
+	await converterSVG_32.apply("icon.svg", "icon/32.png", debug);
+	await converterSVG_64.apply("icon.svg", "icon/64.png", debug);
+	await converterSVG_128.apply("icon.svg", "icon/128.png", debug);
 
 	await bundlerTS.apply("background.ts", undefined, debug);
 	await bundlerJS.apply("background.js", undefined, debug); // prefer .js over .ts

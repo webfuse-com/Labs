@@ -80,15 +80,16 @@ The scaffolded project resembles the following file structure:
     │   │   ├── popup.html ❕
     │   │   ├── popup.[css|scss]
     │   │   └── popup.[js|ts]
-    │   └── /shared                     # Shared files
-    │       ├── /components             # Single file components ('SFCs'), see below
-    │       │   └── my-component.html
-    │       ├── shared.[css|scss]
-    │       └── shared.[js|ts]
-    ├── /static                         # Static assets
-    │   └── image.png
-    ├── background.js                   # Background script
-    └── content.js                      # Content script
+    │   ├── /shared                     # Shared files
+    │   │   ├── /components             # Single file components ('SFCs'), see below
+    │   │   │   └── my-component.html
+    │   │   ├── shared.[css|scss]
+    │   │   └── shared.[js|ts]
+    │   ├── background.js ❕            # Background script
+    │   ├── content.js ❕               # Content script
+    │   └── icon.svg                    # Extension icon
+    └── /static                         # Static assets
+        └── image.png
 ```
 
 The `/src` directory contains all individual extension files. Edit them to your needs. Aligned with browser and Webfuse terminology, Labs constrains the file structure and naming in order to enforce consistency across extensions: There is an asset directory targeting each a new tab (_'newtab'_), and the popup window (_'popup'_), as well as a directory shared among both aforementioned (_'shared'_). The target directories require exactly one markup file, and may optionally contain a stylesheet and a script file. Moreover, a shared stylesheet and script may be provided to the shared directory. Also, each directory may contain a components directory that contains Labs-specific single file components, i.e. reusable markup (more details below).
@@ -195,6 +196,10 @@ Labs introduces a lean single file component (SFC) interface. Every SFC is decla
 A valid SFC file assembles from at most one of the following tags (top-level): `<template>` can contain the component markup. It can be leveraged with [slots](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_templates_and_slots#adding_flexibility_with_slots). `<style>` can contain styles that apply only to the component markup. `<script>` can contain native web component [lifecycle callbacks](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#custom_element_lifecycle_callbacks), and utilize related concepts. A component's DOM object can be accessed through `this.#DOM`.
 
 > SFCs work with SCSS and TypeScript by specifiying a `lang` attribute on the respective tag. This is, `<style lang="scss">` or `<script lang="ts">`, respectively.
+
+### Icon
+
+An optional extension icon can be provided as an SVG. The Labs bundler creates different size PNGs for the icon to be compatible across browsers and devices.
 
 ### Static Assets
 

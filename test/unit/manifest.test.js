@@ -25,5 +25,11 @@ assertEquals({
   "host_permissions": [
     "<all_urls>"
   ],
+  "icons": {
+    "16": "icon/16.png",
+    "32": "icon/32.png",
+    "64": "icon/64.png",
+    "128": "icon/128.png"
+  },
   "name": "test"
 }, JSON.parse(MANIFEST_JSON), "Invalid manifest.json");
