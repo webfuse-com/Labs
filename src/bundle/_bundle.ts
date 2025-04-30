@@ -184,36 +184,47 @@ async function bundleAll(debug: boolean = false): Promise<TBundleResults> {
 	await converterSVG_64.apply("icon.svg", "icon/64.png", debug);
 	await converterSVG_128.apply("icon.svg", "icon/128.png", debug);
 
-	await bundlerTS.apply("background.ts", undefined, debug);
-	await bundlerJS.apply("background.js", undefined, debug); // prefer .js over .ts
-	await bundlerTS.apply("content.ts", undefined, debug);
-	await bundlerJS.apply("content.js", undefined, debug);    // prefer .js over .ts
+	const srcPath = (path: string) => existsSync(join(SRC_PATH, path))
+		? path
+		: null;
+	const getSrcPath = (name: string, ext: string, path: string = "."): null|string => {
+		return srcPath(join(path, [ name, ext ].join(".")))
+			|| srcPath(join(path, ext, [ name, ext ].join(".")));
+	};
 
-	await bundlerTS.apply("shared/shared.ts", "shared.js", debug);
-	await bundlerJS.apply("shared/shared.js", "shared.js", debug);      													// prefer .js over .ts
-	let forceComponentRender = await bundlerSCSS.apply("shared/shared.scss", "shared.css", debug);
-	    forceComponentRender = await bundlerCSS.apply("shared/shared.css", "shared.css", debug) || forceComponentRender;	// prefer .css over .scss
+	await bundlerTS.apply(getSrcPath("background", "ts"), "background.js", debug);
+	await bundlerJS.apply(getSrcPath("background", "js"), "background.js", debug);		// prefer .js over .ts
+	await bundlerTS.apply(getSrcPath("content", "ts"), "content.js", debug);
+	await bundlerJS.apply(getSrcPath("content", "js"), "content.js", debug);			// prefer .js over .ts
+
+	await bundlerTS.apply(getSrcPath("shared", "ts", "shared"), "shared.js", debug);
+	await bundlerJS.apply(getSrcPath("shared", "js", "shared"), "shared.js", debug);	// prefer .js over .ts
+	let forceComponentRender = await bundlerSCSS.apply(getSrcPath("shared", "scss", "shared"), "shared.css", debug);
+	    forceComponentRender = await bundlerCSS.apply(getSrcPath("shared", "css", "shared"), "shared.css", debug) || forceComponentRender;
+	// prefer .css over .scss
 
 	const sfcShared = await renderComponents(join(SRC_PATH, "shared/components"), forceComponentRender);
 
 	await Promise.all(TARGET_DIRS
         .map(async target => {
-        	const getSrcPath = (ext: string) => [ join(target, target), ext ].join(".");
+        	const getTargetSrcPath = (ext: string): null|string => {
+        		return getSrcPath(target, ext, target);
+        	};
         	const getDistPath = (ext: string) => [ target, ext ].join(".");
 
         	const sfc = await renderComponents(join(SRC_PATH, target, "components"), forceComponentRender);
         	const name = (await getPackage()).name ?? "";
 
         	await bundlerHTML
-                .apply(getSrcPath("html"), getDistPath("html"), debug, true, (sfcShared.wasModified || sfc.wasModified), {
+                .apply(getTargetSrcPath("html"), getDistPath("html"), debug, true, (sfcShared.wasModified || sfc.wasModified), {
                 	name: `${name.charAt(0).toUpperCase()}${name.slice(1)}`,
                 	target,
                 	sfcGlobal, sfcShared, sfc
                 });
-        	await bundlerTS.apply(getSrcPath("ts"), getDistPath("js"), debug);
-        	await bundlerJS.apply(getSrcPath("js"), getDistPath("js"), debug);      // prefer .js over .ts
-        	await bundlerSCSS.apply(getSrcPath("scss"), getDistPath("css"), debug);
-        	await bundlerCSS.apply(getSrcPath("css"), getDistPath("css"), debug);   // prefer .css over .scss
+        	await bundlerTS.apply(getTargetSrcPath("ts"), getDistPath("js"), debug);
+        	await bundlerJS.apply(getTargetSrcPath("js"), getDistPath("js"), debug);      // prefer .js over .ts
+        	await bundlerSCSS.apply(getTargetSrcPath("scss"), getDistPath("css"), debug);
+        	await bundlerCSS.apply(getTargetSrcPath("css"), getDistPath("css"), debug);   // prefer .css over .scss
         }));
 
 	const fileCount = Bundler.flushFileCount();

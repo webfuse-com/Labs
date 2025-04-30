@@ -2,7 +2,7 @@
  * Evaluates only in the Newtab.
  */
 
-import { sendMessage } from "./ts/message";
+import { sendMessage } from "./message";
 
 window.sayHello = function(): void {
     document.querySelector("p")

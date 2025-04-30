@@ -83,6 +83,8 @@ export class Bundler {
 		force: boolean = false,
 		...args: unknown[]
 	) {
+		if(!srcPath) return false;
+
 		const absoluteSrcPath = join(SRC_PATH, srcPath);
 		if(!existsSync(absoluteSrcPath)) {
 			if(optional) return;

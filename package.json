@@ -24,7 +24,7 @@
     "compile": "npm run clean && npx tsc --project ./tsconfig.lib.json",
     "lint": "npx eslint ./src/*",
     "lint:fix": "npm run lint -- --fix",
-    "prepare:test": "npm run compile && npm run bundle:debug",
+    "prepare:test": "npm run compile && rm -rf ./test-extension/dist/ && npm run bundle:debug",
     "test:unit": "node ./test/test.unit.js",
     "test:end-to-end": "node ./test/test.end-to-end.js --headless",
     "test:end-to-end:no-headless": "node ./test/test.end-to-end.js",

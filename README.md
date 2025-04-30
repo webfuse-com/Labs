@@ -102,6 +102,17 @@ labs bundle
 
 The bundler automatically runs with the preview environment. Once your preview is up and running, there is no need to run the `bundle` command everytime you edited the source.
 
+> Sometimes, an asset is assembled from multiple files. Assets can also be wrapped by a directory named like their type. For instance:
+>
+> ```
+> └── /newtab
+>     ├── newtab.html
+>     ├── newtab.css
+>     └── ts                # Directory wrapping
+>         ├── newtab.ts
+>         └── constants.ts
+> ```
+
 > You do not have to specify a `manifest.json`. Labs takes care of all the metadata. In particular, it copies the name and version fields from `package.json`.
 
 ### Markup
