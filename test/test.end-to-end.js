@@ -41,7 +41,8 @@ let terminationTimeout;
 const extendTerminationTimeout = (ms = _config.terminationTimeoutMs) => {
     clearTimeout(terminationTimeout);
     terminationTimeout = setTimeout(() => {
-        console.error("Test suite timed out");
+        openCases
+            && console.error("\x1b[31mTest suite timed out\x1b[0m");
 
         process.exit(openCases ? 1 : 0);
     }, openCases ? ms : 500);

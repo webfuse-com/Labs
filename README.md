@@ -154,6 +154,9 @@ function sayHello() {
 }
 ```
 
+> Scripts support use of [ES import](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import) statements (`import`).
+> The shared script is loaded alongside the target script. It is recommended to not import from shared to target module. Instead, keep it for global scope (`window`) declarations if needed.
+
 ### Single File Components
 
 Labs introduces a lean single file component (SFC) interface. Every SFC is declared in its own file, which must be a direct child of a `/components` directory. A dedicated `/components` directory works for each asset directory – i.e. a target or the shared directory. An SFC's filename (without the extension) dictates the related tag name. A tag name is furthermore always prefixed (namespaced) with `sfc-`.

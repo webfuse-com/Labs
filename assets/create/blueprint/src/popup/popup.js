@@ -2,7 +2,9 @@
  * Evaluates only in the Popup.
  */
 
-function sayHello() {
+import { NAME } from "./js/constants";
+
+window.sayHello = function() {
     document.querySelector("p")
-        .textContent = `${randomGreeting()} from Popup.`;
+        .textContent = `${randomGreeting()} from ${NAME}.`;
 }

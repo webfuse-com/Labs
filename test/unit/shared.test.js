@@ -19,9 +19,10 @@ body {
 `, SHARED_CSS, "Invalid shared.css");
 
 assertIn(`
-function randomGreeting() {
-    return [ "Hello", "Hi", "Hoi" ]
-        .sort(() => Math.round(Math.random()))
-        .pop();
-}
+(() => {
+  // <stdin>
+  window.randomGreeting = function() {
+    return ["Hello", "Hi", "Hoi"].sort(() => Math.round(Math.random())).pop();
+  };
+})();
 `, SHARED_JS, "Invalid shared.js");

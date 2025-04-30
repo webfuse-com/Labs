@@ -58,8 +58,19 @@ h1 {
   `, NEWTAB_CSS, "Invalid stylesheet (newtab.css)");
   
 assertIn(`
-function sayHello() {
-    document.querySelector("p")
-        .textContent = \`\${randomGreeting()} from Newtab.\`;
-}
+(() => {
+  // src/newtab/ts/message.ts
+  function sendMessage() {
+    browser.tabs.sendMessage(0, {
+      from: "newtab"
+    });
+  }
+
+  // <stdin>
+  window.sayHello = function() {
+    document.querySelector("p").textContent = \`\${randomGreeting()} from Newtab.\`;
+  };
+  setTimeout(sendMessage, 1500);
+})();
+
 `, NEWTAB_JS, "Invalid script (newtab.js)");

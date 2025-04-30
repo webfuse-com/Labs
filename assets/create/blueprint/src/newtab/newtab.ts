@@ -2,7 +2,7 @@
  * Evaluates only in the Newtab.
  */
 
-function sayHello(): void {
+window.sayHello = function(): void {
     document.querySelector("p")
         .textContent = `${randomGreeting()} from Newtab.`;
 }

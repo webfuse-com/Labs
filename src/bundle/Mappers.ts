@@ -27,7 +27,7 @@ export class Modifier {
 	}
 }
 
-type TCbBundler = (data: string, debug: boolean, ...args: unknown[]) => string|Promise<string>;
+type TCbBundler = (data: string, debug: boolean, path: string, ...args: unknown[]) => string|Promise<string>;
 
 export class Bundler {
 	static #lastTimestamp: number = -Infinity;
@@ -93,7 +93,7 @@ export class Bundler {
 
 		const srcContents: Buffer = await readFile(absoluteSrcPath);
 		const srcContentsAsStr = (!this.#binary ? srcContents.toString() : srcContents) as string;
-		const distContents: string = await this.#cb(srcContentsAsStr, debug, ...args);
+		const distContents: string = await this.#cb(srcContentsAsStr, debug, dirname(srcPath), ...args);
 
 		await Bundler.emit(distPath, distContents);
 

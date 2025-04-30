@@ -2,13 +2,11 @@
  * Evaluates only in the Newtab.
  */
 
-function sayHello(): void {
+import { sendMessage } from "./ts/message";
+
+window.sayHello = function(): void {
     document.querySelector("p")
         .textContent = `${randomGreeting()} from Newtab.`;
 }
 
-setTimeout(() => {
-    browser.tabs.sendMessage(0, {
-        from: "newtab"
-    });
-}, 1500);
+setTimeout(sendMessage, 1500);

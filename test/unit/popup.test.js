@@ -59,8 +59,15 @@ h1 {
 `, POPUP_CSS, "Invalid stylesheet (popup.css)");
 
 assertIn(`
-function sayHello() {
-  document.querySelector("p")
-      .textContent = \`\${randomGreeting()} from Popup.\`;
-}
+(() => {
+  // <stdin>
+  window.sayHello = function() {
+    document.querySelector("p").textContent = \`\${randomGreeting()} from Popup.\`;
+  };
+  browser.runtime.onMessage.addListener((msg, sender) => {
+    console.log("Received message:", msg);
+    console.log("From:", sender);
+  });
+})();
+
 `, POPUP_JS, "Invalid script (popup.js)");

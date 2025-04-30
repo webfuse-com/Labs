@@ -23,7 +23,7 @@ import { getAssetPath } from "../assets.js";
 import manifest from "./manifest.json" with { type: "json" };
 import EventEmitter from "events";
 import { Modifier, Bundler } from "./Mappers.js";
-import { transpileSCSS, transpileTS } from "./transpilers.js";
+import { transpileSCSS, transpileModulesScript } from "./transpilers.js";
 
 
 const WATCH_INTERVAL: number = 1000;
@@ -59,7 +59,7 @@ const formatterHTML = new Modifier(html => prettier.format(html, {
  * 2. Apply formatter
  * 3. Apply minifier
  */
-const bundlerHTML = new Bundler(async (html, debug, options: {
+const bundlerHTML = new Bundler(async (html, debug, _, options: {
     name: string;
     target: string;
     sfcGlobal: TSfc;
@@ -91,21 +91,23 @@ const bundlerCSS = new Bundler((css, debug) => {
 const bundlerSCSS = new Bundler((scss, debug) => {
 	return minifierCSS.apply(transpileSCSS(scss), debug);
 });
+
 /**
  * JS bundler:
  * 1. Apply minifier
  */
-const bundlerJS = new Bundler((js, debug) => {
-	return minifierJS.apply(js, debug);
+const bundlerJS = new Bundler(async (js, debug, path) => {
+	return minifierJS.apply(await transpileModulesScript(js, "js", path), debug);
 });
 /**
  * TS bundler:
  * 1. Transpile TS to JS
  * 2. Apply minifier
  */
-const bundlerTS = new Bundler((ts, debug) => {
-	return minifierJS.apply(transpileTS(ts), debug);
+const bundlerTS = new Bundler(async (ts, debug, path) => {
+	return minifierJS.apply(await transpileModulesScript(ts, "ts", path), debug);
 });
+
 
 /**
  * SVG to PNG icon converter:
