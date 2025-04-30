@@ -97,7 +97,7 @@ const bundlerSCSS = new Bundler((scss, debug) => {
  * 1. Apply minifier
  */
 const bundlerJS = new Bundler(async (js, debug, path) => {
-	return minifierJS.apply(await transpileModulesScript(js, "js", path), debug);
+	return minifierJS.apply(await transpileModulesScript(js, "js", join(SRC_PATH, path)), debug);
 });
 /**
  * TS bundler:
@@ -105,7 +105,7 @@ const bundlerJS = new Bundler(async (js, debug, path) => {
  * 2. Apply minifier
  */
 const bundlerTS = new Bundler(async (ts, debug, path) => {
-	return minifierJS.apply(await transpileModulesScript(ts, "ts", path), debug);
+	return minifierJS.apply(await transpileModulesScript(ts, "ts", join(SRC_PATH, path)), debug);
 });
 
 

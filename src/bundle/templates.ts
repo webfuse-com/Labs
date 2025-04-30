@@ -13,9 +13,9 @@ import { getAssetPath } from "../assets.js";
 /**
  * Load a template from the /templates directory. 
  */
-export async function load(name: string): Promise<string> {
+export async function load(name: string, extension: string = "html"): Promise<string> {
 	return (await readFile(
-		getAssetPath("bundle", `templates/template.${name}.html`)
+		getAssetPath("bundle", `templates/template.${name}.${extension}`)
 	)).toString();
 }
 

@@ -22,18 +22,24 @@ assertIn(`
 `, POPUP_HTML, "SFCs not rendered (popup.html)");
 
 assertIn(`
-        <span>
-        <slot></slot>
-      </span>
+    <input type="url" placeholder="Type in a URL and press enter" />
       <style>
-        span {
+        input {
           color: red;
         }
       </style>
     </template>
     <script>
-      window.customElements.define(
-        "sfc-my-component-2",
+      (() => {
+        // <stdin>
+        window.customElements.define(
+          "webfuse-search",
+          class extends HTMLElement {
+            #DOM;
+            constructor() {
+              super();
+              this.#DOM = this.attachShadow({ mode: "closed" });
+              this.#DOM.appendChild(
 `, POPUP_HTML, "Shared SFC not rendered (popup.html)");
 
 assertIn(`
