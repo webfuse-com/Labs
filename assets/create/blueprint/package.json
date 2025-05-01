@@ -2,8 +2,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "bundle": "labs bundle",
-    "preview": "labs preview"
+    "bundle": "npx labs bundle",
+    "preview": "npx labs preview"
   },
   "devDependencies": {
     "@surfly/labs": "github:surfly/labs"
