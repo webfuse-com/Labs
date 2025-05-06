@@ -18,12 +18,13 @@
 6. [**Upload**](#upload)
 7. [**CLI Reference**](#cli-reference)
 8. [**Cheatsheet**](#cheatsheet)
+8. [**with Webfuse**](#with-webfuse)
 9. [**Further Reading**](#further-reading)
 
 ## Prerequisites
 
 - [Node.js + NPM](https://nodejs.org) v22+/v10+
-- [Webfuse](https://webfuse.com/studio/auth/signup) Account
+- [Webfuse](https://webfuse.com/studio/auth/signup) Account (optional, recommended)
 
 ## Installation
 
@@ -317,6 +318,10 @@ Print the currently installed version of Labs.
 
 1. `labs bundle`
 2. Upload `/dist` to Webfuse session.
+
+## with Webfuse
+
+...
 
 ## Further Reading
 

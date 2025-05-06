@@ -9,7 +9,7 @@ import { createHash } from "crypto";
 
 import { parse } from "node-html-parser";
 
-import { Bundler } from "./Mappers.js";
+import { Bundler } from "./mappers/Bundler.js";
 import { transpileModulesScript, transpileSCSS } from "./transpilers.js";
 import { load as loadTemplate, template } from "./templates.js";
 

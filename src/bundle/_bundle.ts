@@ -7,131 +7,23 @@
 import { readFile, cp } from "fs/promises";
 import { rmSync, mkdirSync, existsSync } from "fs";
 import { join } from "path";
-
-import * as prettier from "prettier";
-import HTMLMinifier from "html-minifier";
-import CSSMinifier from "clean-css";
-import JSMinifier from "uglify-js";
-import sharp from "sharp";
+import EventEmitter from "events";
 
 import { SRC_PATH, DIST_PATH, TARGET_DIRS, STATIC_PATH, STATIC_DIR } from "../constants.js";
-import { load as loadTemplate, template } from "./templates.js";
-import { TSfc, renderComponents } from "./sfc.js";
+import { renderComponents } from "./sfc.js";
 
-import { TPackageJson, getPackage } from "../package.js";
+import { Bundler } from "./mappers/Bundler.js";
 import { getAssetPath } from "../assets.js";
-import manifest from "./manifest.json" with { type: "json" };
-import EventEmitter from "events";
-import { Modifier, Bundler } from "./Mappers.js";
-import { transpileSCSS, transpileModulesScript } from "./transpilers.js";
+import { getPackage } from "../package.js";
+
+import { converterSVG_16, converterSVG_32, converterSVG_64, converterSVG_128 } from "./bundlers/image.js";
+import { bundlerSCSS, bundlerCSS, minifierCSS } from "./bundlers/css.js";
+import { bundlerHTML } from "./bundlers/html.js";
+import { bundlerTS, bundlerJS, minifierJS } from "./bundlers/js.js";
+import { bundlerManifestJSON } from "./bundlers/json.js";
 
 
 const WATCH_INTERVAL: number = 1000;
-const MARKUP_TEMPLATE: string = await loadTemplate("markup");
-
-
-/**
- * Asset minifiers based on:
- * - HTML: html-minifier
- * - CSS: clean-css
- * - JS: uglify-js
- */
-const minifierHTML = new Modifier(html => HTMLMinifier.minify(html, {
-	minifyJS: true,
-	minifyCSS: true,
-	collapseWhitespace: true
-}));
-const minifierCSS = new Modifier(css => new CSSMinifier().minify(css).styles);
-const minifierJS = new Modifier(js => JSMinifier.minify(js).code);
-
-/**
- * HTML formatter based on prettier.
- * Required only to beautify indentation in debug mode.
- */
-const formatterHTML = new Modifier(html => prettier.format(html, {
-	parser: "html"
-}));
-
-
-/**
- * HTML bundler, requires SFC data:
- * 1. Fill markup template
- * 2. Apply formatter
- * 3. Apply minifier
- */
-const bundlerHTML = new Bundler(async (html, debug, _, options: {
-    name: string;
-    target: string;
-    sfcGlobal: TSfc;
-    sfcShared: TSfc;
-    sfc: TSfc;
-}) => {
-	let renderedHtml = MARKUP_TEMPLATE;
-	renderedHtml = template(renderedHtml, "NAME", options.name);
-	renderedHtml = template(renderedHtml, "TARGET", options.target);
-	renderedHtml = template(renderedHtml, "GLOBAL_SFC_HTML", options.sfcGlobal.data.join("\n"));
-	renderedHtml = template(renderedHtml, "SHARED_SFC_HTML", options.sfcShared.data.join("\n"));
-	renderedHtml = template(renderedHtml, "SFC_HTML", options.sfc.data.join("\n"));
-	renderedHtml = template(renderedHtml, "HTML", html);
-	return minifierHTML
-        .apply(await formatterHTML.apply(renderedHtml), debug);
-});
-/**
- * CSS bundler:
- * 1. Apply minifier
- */
-const bundlerCSS = new Bundler((css, debug) => {
-	return minifierCSS.apply(css, debug);
-});
-/**
- * SCSS bundler:
- * 1. Transpile SCSS to CSS
- * 2. Apply minifier
- */
-const bundlerSCSS = new Bundler((scss, debug) => {
-	return minifierCSS.apply(transpileSCSS(scss), debug);
-});
-
-/**
- * JS bundler:
- * 1. Apply minifier
- */
-const bundlerJS = new Bundler(async (js, debug, path) => {
-	return minifierJS.apply(await transpileModulesScript(js, "js", join(SRC_PATH, path)), debug);
-});
-/**
- * TS bundler:
- * 1. Transpile TS to JS
- * 2. Apply minifier
- */
-const bundlerTS = new Bundler(async (ts, debug, path) => {
-	return minifierJS.apply(await transpileModulesScript(ts, "ts", join(SRC_PATH, path)), debug);
-});
-
-
-/**
- * SVG to PNG icon converter:
- * 1. Create Sharp object from SVG.
- * 2. Convert to PNG of respective size (height constraint).
- */
-const svgToPng = (svg: string, size: number): string => {
-	return sharp(svg)
-		.resize(null, size)
-		.png()
-		.toBuffer() as unknown as string
-};
-const converterSVG_16 = new Bundler(svg => {
-	return svgToPng(svg, 16);
-}, true);
-const converterSVG_32 = new Bundler(svg => {
-	return svgToPng(svg, 32);
-}, true);
-const converterSVG_64 = new Bundler(svg => {
-	return svgToPng(svg, 64);
-}, true);
-const converterSVG_128 = new Bundler(svg => {
-	return svgToPng(svg, 128);
-}, true);
 
 
 const readGlobal = async (ext: string) => {
@@ -192,6 +84,11 @@ async function bundleAll(debug: boolean = false): Promise<TBundleResults> {
 			|| srcPath(join(path, ext, [ name, ext ].join(".")));
 	};
 
+	await bundlerManifestJSON.apply([
+		getAssetPath("bundle", "manifest.json"),
+		srcPath("../package.json")
+	], "manifest.json", debug);
+
 	await bundlerTS.apply(getSrcPath("background", "ts"), "background.js", debug);
 	await bundlerJS.apply(getSrcPath("background", "js"), "background.js", debug);		// prefer .js over .ts
 	await bundlerTS.apply(getSrcPath("content", "ts"), "content.js", debug);
@@ -200,8 +97,7 @@ async function bundleAll(debug: boolean = false): Promise<TBundleResults> {
 	await bundlerTS.apply(getSrcPath("shared", "ts", "shared"), "shared.js", debug);
 	await bundlerJS.apply(getSrcPath("shared", "js", "shared"), "shared.js", debug);	// prefer .js over .ts
 	let forceComponentRender = await bundlerSCSS.apply(getSrcPath("shared", "scss", "shared"), "shared.css", debug);
-	    forceComponentRender = await bundlerCSS.apply(getSrcPath("shared", "css", "shared"), "shared.css", debug) || forceComponentRender;
-	// prefer .css over .scss
+	    forceComponentRender = await bundlerCSS.apply(getSrcPath("shared", "css", "shared"), "shared.css", debug) || forceComponentRender;	// prefer .css over .scss
 
 	const sfcShared = await renderComponents(join(SRC_PATH, "shared/components"), forceComponentRender);
 
@@ -228,7 +124,8 @@ async function bundleAll(debug: boolean = false): Promise<TBundleResults> {
         }));
 
 	const fileCount = Bundler.flushFileCount();
-	fileCount && Bundler.updateTimestamp();
+	fileCount
+		&& Bundler.updateTimestamp();
 
 	return {
 		src: SRC_PATH,
@@ -248,15 +145,6 @@ export async function bundle(debug?: boolean): Promise<EventEmitter> {
 
 	existsSync(STATIC_PATH)
         && await cp(STATIC_PATH, join(DIST_PATH, STATIC_DIR), { recursive: true });
-
-	const packageObj: TPackageJson = await getPackage();
-	const manifestObj: {
-        name?: string;
-        version?: string;
-    } = Object.assign({}, manifest);
-	manifestObj.name = packageObj.name ?? "extension";
-	manifestObj.version = packageObj.version ?? "1.0";
-	await Bundler.emit("manifest.json", JSON.stringify(manifestObj, null, debug ? 2 : undefined));
 
 	await Bundler.emit("global.css", await minifierCSS.apply(globals.css, debug));
 	await Bundler.emit("global.js", await minifierJS.apply(globals.js, debug));
