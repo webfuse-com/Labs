@@ -232,6 +232,13 @@ The Labs preview environment primarily enables incremental development of the ex
 
 A Labs preview only mocks what is relevant to an extension's components. Complementary API properties are considered 'dry': They exist for completeness, but a call does nothing but return an empty promise, and log a debug message. 
 
+<sub><code>src/content.js</code></sub>
+
+``` js
+browser.runtime
+  .sendMessage("Hello world");
+```
+
 ### Implemented API
 
 | Property Chain | State |
@@ -321,7 +328,21 @@ Print the currently installed version of Labs.
 
 ## with Webfuse
 
-...
+### Environmental Variables
+
+<sub><code>.env</code></sub>
+
+``` .env
+FOO=bar
+BAZ=123
+```
+
+<sub><code>src/background.js</code></sub>
+
+``` js
+console.log(browser.virtualSession.env.foo);  // "bar"
+```
+
 
 ## Further Reading
 
