@@ -13,7 +13,7 @@ import { transpileModulesScript } from "../transpilers.js";
  * 1. Apply minifier
  */
 export const bundlerJS = new Bundler(async (js: string, debug, path) => {
-    return minifierJS.apply(await transpileModulesScript(js, "js", join(SRC_PATH, path)), debug);
+	return minifierJS.apply(await transpileModulesScript(js, "js", join(SRC_PATH, path)), debug);
 });
 
 /**
@@ -22,7 +22,7 @@ export const bundlerJS = new Bundler(async (js: string, debug, path) => {
  * 2. Apply minifier
  */
 export const bundlerTS = new Bundler(async (ts: string, debug, path) => {
-    return minifierJS.apply(await transpileModulesScript(ts, "ts", join(SRC_PATH, path)), debug);
+	return minifierJS.apply(await transpileModulesScript(ts, "ts", join(SRC_PATH, path)), debug);
 });
 
 /**

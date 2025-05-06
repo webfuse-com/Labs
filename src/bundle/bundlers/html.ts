@@ -23,14 +23,14 @@ export const bundlerHTML = new Bundler(async (html: string, debug, _, options: {
     sfcShared: TSfc;
     sfc: TSfc;
 }) => {
-    let renderedHtml = MARKUP_TEMPLATE;
-    renderedHtml = template(renderedHtml, "NAME", options.name);
-    renderedHtml = template(renderedHtml, "TARGET", options.target);
-    renderedHtml = template(renderedHtml, "GLOBAL_SFC_HTML", options.sfcGlobal.data.join("\n"));
-    renderedHtml = template(renderedHtml, "SHARED_SFC_HTML", options.sfcShared.data.join("\n"));
-    renderedHtml = template(renderedHtml, "SFC_HTML", options.sfc.data.join("\n"));
-    renderedHtml = template(renderedHtml, "HTML", html);
-    return minifierHTML
+	let renderedHtml = MARKUP_TEMPLATE;
+	renderedHtml = template(renderedHtml, "NAME", options.name);
+	renderedHtml = template(renderedHtml, "TARGET", options.target);
+	renderedHtml = template(renderedHtml, "GLOBAL_SFC_HTML", options.sfcGlobal.data.join("\n"));
+	renderedHtml = template(renderedHtml, "SHARED_SFC_HTML", options.sfcShared.data.join("\n"));
+	renderedHtml = template(renderedHtml, "SFC_HTML", options.sfc.data.join("\n"));
+	renderedHtml = template(renderedHtml, "HTML", html);
+	return minifierHTML
         .apply(await formatterHTML.apply(renderedHtml), debug);
 });
 
@@ -39,14 +39,14 @@ export const bundlerHTML = new Bundler(async (html: string, debug, _, options: {
  * Required only to beautify indentation in debug mode.
  */
 export const formatterHTML = new Modifier(html => prettier.format(html, {
-    parser: "html"
+	parser: "html"
 }));
 
 /**
  * HTML minifier based on 'html-minifier'.
  */
 export const minifierHTML = new Modifier(html => HTMLMinifier.minify(html, {
-    minifyJS: true,
-    minifyCSS: true,
-    collapseWhitespace: true
+	minifyJS: true,
+	minifyCSS: true,
+	collapseWhitespace: true
 }));

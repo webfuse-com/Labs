@@ -31,5 +31,8 @@ assertEquals({
     "64": "icon/64.png",
     "128": "icon/128.png"
   },
-  "name": "test"
+  "name": "test",
+  env: [
+    { key: "FOO", value: "bar" }
+  ]
 }, JSON.parse(MANIFEST_JSON), "Invalid manifest.json");

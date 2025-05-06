@@ -14,7 +14,7 @@ import { transpileSCSS } from "../transpilers.js";
  * 1. Apply minifier
  */
 export const bundlerCSS = new Bundler((css: string, debug) => {
-    return minifierCSS.apply(css, debug);
+	return minifierCSS.apply(css, debug);
 });
 /**
  * SCSS bundler:
@@ -22,7 +22,7 @@ export const bundlerCSS = new Bundler((css: string, debug) => {
  * 2. Apply minifier
  */
 export const bundlerSCSS = new Bundler((scss: string, debug) => {
-    return minifierCSS.apply(transpileSCSS(scss), debug);
+	return minifierCSS.apply(transpileSCSS(scss), debug);
 });
 
 /**

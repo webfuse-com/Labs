@@ -86,7 +86,8 @@ async function bundleAll(debug: boolean = false): Promise<TBundleResults> {
 
 	await bundlerManifestJSON.apply([
 		getAssetPath("bundle", "manifest.json"),
-		srcPath("../package.json")
+		srcPath("../package.json"),
+		srcPath("../.env")
 	], "manifest.json", debug);
 
 	await bundlerTS.apply(getSrcPath("background", "ts"), "background.js", debug);

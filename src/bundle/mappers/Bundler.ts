@@ -76,7 +76,7 @@ export class Bundler {
 
 		let applied: boolean = false;
 		for(const srcPath of srcPathsList) {
-            if(!srcPath) continue;
+			if(!srcPath) continue;
 
 			const absoluteSrcPath = absPath(srcPath);
 			if(!existsSync(absoluteSrcPath)) {
@@ -87,22 +87,22 @@ export class Bundler {
 			}
 			if(!force && !(await Bundler.fileModified(absoluteSrcPath))) continue;
 
-            const srcContents: string[] = await Promise.all(
-                srcPathsList
+			const srcContents: string[] = await Promise.all(
+				srcPathsList
                     .map(async (srcPath: string) => {
-                        if(!srcPath) return "";
+                    	if(!srcPath) return "";
 
-                        const srcContent: Buffer = await readFile(absPath(srcPath));
-                        return (!this.#binary ? srcContent.toString() : srcContent) as string;
+                    	const srcContent: Buffer = await readFile(absPath(srcPath));
+                    	return (!this.#binary ? srcContent.toString() : srcContent) as string;
                     })
-            );
+			);
     
 			const distContents: string = await this.#cb(
-                (srcContents.length <= 1)
-                    ? srcContents[0]
-                    : srcContents,
-                debug, dirname(srcPath), ...args
-            );
+				(srcContents.length <= 1)
+					? srcContents[0]
+					: srcContents,
+				debug, dirname(srcPath), ...args
+			);
 
 			await Bundler.emit(distPath, distContents);
 
