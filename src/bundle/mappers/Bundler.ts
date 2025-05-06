@@ -80,8 +80,6 @@ export class Bundler {
 
 			const absoluteSrcPath = absPath(srcPath);
 			if(!existsSync(absoluteSrcPath)) {
-				console.log(absoluteSrcPath)
-				console.log(absoluteSrcPath)
 				if(optional) return;
 				throw new ReferenceError(`Missing file ${srcPath}`);
 			}

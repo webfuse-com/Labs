@@ -33,7 +33,9 @@ window.browser = {
         }
     }),
     virtualSession: new Proxy({}, {
-        get(_, prop) {
+        get(target, prop) {
+            if(prop === "env") return Reflect.get(target, prop);
+
             return handleGet("virtualSession", prop);
         }
     })

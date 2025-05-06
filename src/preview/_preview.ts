@@ -55,9 +55,13 @@ const readDoc = (path: string, rootPath = join(import.meta.dirname)): Promise<nu
  * For instance, the content script is injected to newtab.html (only).
  * The mock API script, on the other hand, is injected into any document.
  */
-const injectPriorityScript = (markup: string, src: string) => {
+const injectPriorityScript = (markup: string, src: string): string => {
 	return markup
         .replace(/(<head[^>]*>(\n? *))/i, `$1<script src="${src}"></script>$2`);
+}
+const injectPriorityScriptRaw = (markup: string, script: string): string => {
+	return markup
+        .replace(/(<head[^>]*>(\n? *))/i, `$1<script>${script}</script>$2`);
 }
 
 
@@ -115,6 +119,20 @@ function createHTTPServer(port: number) : Promise<void>{
 					} else {
 						distFile = injectPriorityScript(distFile, "/_assets/api/mock.other.js");
 					}
+					distFile = injectPriorityScriptRaw(distFile, `
+						browser.virtualSession.env = ${
+	JSON.stringify(
+		Object.fromEntries(
+			(
+				(
+				JSON.parse(
+					((await readDoc("manifest.json", DIST_PATH)) ?? "{}").toString()
+				) as { env: { key: string; value: string; }[]; }
+				).env ?? []
+			).map(item => [ item.key, item.value ])
+		)
+	)
+}`);
 					distFile = injectPriorityScript(distFile, "/_assets/api/mock.js");
 				}
 				return end(distFile, MIME[extname(req.url)]);
