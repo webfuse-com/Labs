@@ -343,9 +343,9 @@ BAZ=123
 console.log(browser.virtualSession.env.foo);  // "bar"
 ```
 
-
 ## Further Reading
 
+- [Planned Features](https://github.com/surfly/labs/issues)
 - [Webfuse - The web augmentation platform](https://www.webfuse.com)
 - [Webfuse Extensions](https://docs.surfly.com/webfuse/extensions/api_reference)
 - [Browser Extensions](https://developer.chrome.com/docs/extensions/get-started)
