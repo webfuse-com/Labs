@@ -33,7 +33,7 @@ export const bundlerManifestJSON = new Bundler((data: string[], debug) => {
             .map((tuple: [ string, string ]) => {
             	return {
             		key: tuple[0],
-            		value: tuple[1]
+            		value: debug ? tuple[1] : ""
             	};
             });
 
