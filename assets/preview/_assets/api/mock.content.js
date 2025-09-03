@@ -11,7 +11,7 @@ const sender = {
     url: null,  // TODO: Distinguish sender
     ...(true)   // TODO: Distinguish sender (type)
         ? {
-                tab: {
+            tab: {
                 id: 0,
                 incognito: false,
                 index: 0,

@@ -4,7 +4,7 @@
 
 import { resolve, join } from "path";
 
-import { parseOption } from "./args.js";
+import { parseOption } from "./cli/args.js";
 
 
 export const ROOT_PATH: string = resolve(parseOption("working-dir") ?? ".");

@@ -343,6 +343,8 @@ BAZ=123
 console.log(browser.virtualSession.env.foo);  // "bar"
 ```
 
+> Environment variables are emptied during build, unless debug mode is used.
+
 ## Further Reading
 
 - [Planned Features](https://github.com/surfly/labs/issues)

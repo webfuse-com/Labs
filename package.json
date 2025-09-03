@@ -8,8 +8,8 @@
     "./lib"
   ],
   "bin": {
-    "labs": "./lib/_cli.js",
-    "webfuse-labs": "./lib/_cli.js"
+    "labs": "./lib/cli/_cli.js",
+    "webfuse-labs": "./lib/cli/_cli.js"
   },
   "scripts": {
     "labs": "cd ./test-extension && ../labs",
@@ -18,18 +18,20 @@
     "bundle:watch": "npm run bundle -- --watch",
     "preview": "npm run labs -- preview --debug --only",
     "preview:watch": "npm run labs -- preview --debug",
-    "develop": "npx tsc --project ./tsconfig.dev.json",
-    "develop:watch": "npm run develop -- --watch",
-    "clean": "rm -rf ./lib && rm -f tsconfig.dev.tsbuildinfo",
-    "compile": "npm run clean && npx tsc --project ./tsconfig.lib.json",
+    "build:lib": "npx tsc --project ./tsconfig.lib.dev.json",
+    "build:enhanced-browser-api": "esbuild ./src/enhanced-browser-api/api.ts --outfile=./lib/enhanced-browser-api.js --bundle --minify --target=chrome58,firefox57,safari11,edge16",
+    "develop": "npm run build:lib && npm run build:enhanced-browser-api",
+    "develop:watch": "npm run build:lib -- --watch",
+    "clean": "rm -rf ./lib && rm -f tsconfig.lib.dev.tsbuildinfo",
+    "compile": "npm run clean && npx tsc --project ./tsconfig.lib.build.json && npm run build:enhanced-browser-api",
     "lint": "npx eslint ./src/*",
     "lint:fix": "npm run lint -- --fix",
-    "prepare:test": "npm run compile && rm -rf ./test-extension/dist/ && npm run bundle:debug",
+    "prepare:test": "rm -rf ./test-extension/dist/ && npm run compile && npm run bundle:debug",
     "test:unit": "node ./test/test.unit.js",
     "test:end-to-end": "node ./test/test.end-to-end.js --headless",
     "test:end-to-end:no-headless": "node ./test/test.end-to-end.js",
     "test": "npm run test:unit && npm run test:end-to-end",
-    "release": "node ./bump.js"
+    "release": "npm run compile && node ./bump.js"
   },
   "author": "Thassilo M. Schiepanski",
   "dependencies": {

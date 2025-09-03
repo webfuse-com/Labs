@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.lib.json",
+  "compilerOptions": {
+    "incremental": true,
+    "sourceMap": true
+  }
+}

@@ -15,7 +15,7 @@ const _config = {
 
 // Change to test extension directory and spin up preview
 process.chdir(join(import.meta.dirname, "../test-extension"));
-await (await import("../lib/preview/_preview.js")).preview();
+await (await import("../lib/api/preview/_preview.js")).preview();
 console.log("\x1b[2mPreview application running...\x1b[0m");
 process.on("exit", () => {
     console.log("\x1b[2mPreview application terminated.\x1b[0m");
