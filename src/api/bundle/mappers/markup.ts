@@ -2,7 +2,7 @@ import * as prettier from "prettier";
 import HTMLMinifier from "html-minifier";
 
 import { Bundler } from "../Bundler.js";
-import { Modifier } from "../Modifier.js";
+import { Transpiler } from "../Transpiler.js";
 import { TSfc } from "../sfc.js";
 import { load as loadTemplate, template } from "../templates.js";
 
@@ -38,14 +38,14 @@ export const bundlerHTML = new Bundler(async (html: string, debug, _, options: {
  * HTML formatter based on prettier.
  * Required only to beautify indentation in debug mode.
  */
-export const formatterHTML = new Modifier(html => prettier.format(html, {
+export const formatterHTML = new Transpiler(html => prettier.format(html, {
 	parser: "html"
 }));
 
 /**
  * HTML minifier based on 'html-minifier'.
  */
-export const minifierHTML = new Modifier((html, debug) => {
+export const minifierHTML = new Transpiler((html, debug) => {
 	return !debug
 		? HTMLMinifier.minify(html, {
 			minifyJS: true,

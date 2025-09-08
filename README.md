@@ -353,9 +353,6 @@ console.log(browser.virtualSession.env.foo);  // "bar"
 - [Browser Extensions](https://developer.chrome.com/docs/extensions/get-started)
 - [Introducing: Web Augmentation](https://www.webfuse.com/blog/web-augmentation)
 
-<br>
-<a href="https://webfuse.com" target="_blank"><img src="./.github/cta.png" alt="Instantly extend, automate & share any web session"></a>
-
 <p align="right">
   <sub>&copy; Surfly B.V.</sub>
 </p>

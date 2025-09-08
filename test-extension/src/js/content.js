@@ -1,6 +1,5 @@
 import * as util from "./util";
 
-
 browser.virtualSession.log("Example...");
 
 

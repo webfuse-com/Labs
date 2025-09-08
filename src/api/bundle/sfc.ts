@@ -10,7 +10,8 @@ import { createHash } from "crypto";
 import { parse } from "node-html-parser";
 
 import { Bundler } from "./Bundler.js";
-import { transpileModulesScript, transpileSCSS } from "./transpilers.js";
+import { transpilerSCSS } from "./mappers/style.js";
+import { transpilerScripts } from "./mappers/script.js";
 import { load as loadTemplate, template } from "./templates.js";
 
 import _config from "./config.json" with { type: "json" };
@@ -62,7 +63,7 @@ async function render(tagName: string, component: string, componentPath: string)
 			styleStr && throwOverloadError();
 			styleStr = child.innerHTML.trim();
 			styleStr = (lang === "scss")
-				? transpileSCSS(styleStr)
+				? await transpilerSCSS.apply(styleStr)
 				: styleStr;
 
 			continue;
@@ -97,7 +98,8 @@ async function render(tagName: string, component: string, componentPath: string)
 	renderedComponentScript = template(renderedComponentScript, "IMPORTS", scriptImportStatements.join("\n"));
 	renderedComponentScript = template(renderedComponentScript, "LIFECYCLE", scriptStr);
 	renderedComponentScript = template(renderedComponentScript, "TAG_NAME", tagName);
-	renderedComponentScript = await transpileModulesScript(renderedComponentScript, scriptLang as "js"|"ts", dirname(componentPath));
+	renderedComponentScript = await transpilerScripts
+		.apply(renderedComponentScript, null, scriptLang as "js"|"ts", dirname(componentPath));
 
 	let renderedComponent = SFC_TEMPLATE;
 	renderedComponent = template(renderedComponent, "TEMPLATE", templateStr);

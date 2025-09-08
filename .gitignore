@@ -4,7 +4,7 @@ test-extension/dist/
 
 .DS_Store
 package-lock.json
-tsconfig.dev.tsbuildinfo
+*.tsbuildinfo
 *.js.map
 
 .tmp

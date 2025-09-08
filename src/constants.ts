@@ -7,6 +7,7 @@ import { resolve, join } from "path";
 import { parseOption } from "./cli/args.js";
 
 
+// TODO: Improve path approach
 export const ROOT_PATH: string = resolve(parseOption("working-dir") ?? ".");
 export const SRC_DIR: string = "src";
 export const DIST_DIR: string = "dist";
