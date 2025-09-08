@@ -3,17 +3,17 @@ const POPUP_CSS = _readDist("popup.css");
 const POPUP_JS = _readDist("popup.js");
 
 assertIn(`
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Test</title>
-        <link rel="stylesheet" href="./global.css" />
-        <link rel="stylesheet" href="./shared.css" />
-        <link rel="stylesheet" href="./popup.css" />
-        <script src="./global.js"></script>
-        <script src="./shared.js"></script>
-        <script src="./popup.js"></script>
-    </head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Test</title>
+    <link rel="stylesheet" href="./global.css" />
+    <link rel="stylesheet" href="./shared.css" />
+    <link rel="stylesheet" href="./popup.css" />
+    <script src="./global.js"></script>
+    <!-- <script src="./shared.js"></script> -->
+    <script src="./popup.js"></script>
+  </head>
 `, POPUP_HTML, "Invalid head (popup.html)");
 
 assertIn(`

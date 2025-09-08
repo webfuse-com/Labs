@@ -9,7 +9,7 @@ import { createHash } from "crypto";
 
 import { parse } from "node-html-parser";
 
-import { Bundler } from "./Bundler.js";
+import { Bundler } from "./mapping/Bundler.js";
 import { transpilerSCSS } from "./mappers/style.js";
 import { transpilerScripts } from "./mappers/script.js";
 import { load as loadTemplate, template } from "./templates.js";
@@ -118,7 +118,7 @@ async function render(tagName: string, component: string, componentPath: string)
 /**
  * Render all components in an asset directories /components directory.
  */
-export async function renderComponents(srcPath: string, force: boolean = false, prefix = _config.tagNamePrefix) {
+export async function renderComponents(srcPath: string, force: boolean = false, prefix = _config.sfcTagNamePrefix) {
 	let wasModified: boolean = false;
 
 	const wrapResults = (data: string[]): TSfc => {

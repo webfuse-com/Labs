@@ -7,7 +7,7 @@ import { readFile, writeFile, lstat, mkdir } from "fs/promises";
 import { existsSync } from "fs";
 import { dirname, join, resolve } from "path";
 
-import { SRC_PATH, DIST_PATH } from "../../constants.js";
+import { SRC_PATH, DIST_PATH } from "../../../constants.js";
 
 
 type TCbBundler = (data: string|string[], debug: boolean, path: string, ...args: unknown[]) => string|Promise<string>;
@@ -66,21 +66,30 @@ export class Bundler {
 		optional: boolean = true,
 		force: boolean = false,
 		...args: unknown[]
-	) {
-		if(!srcPaths) return false;
+	): Promise<{
+		hasChanged: boolean;
+		data?: string;
+	}> {
+		if(!srcPaths) return {
+			hasChanged: false
+		};
 
 		const srcPathsList: string[] = [ srcPaths ].flat();
 		distPath = distPath ?? srcPathsList[0];
 
 		const absPath = (srcPath: string): string => resolve(SRC_PATH, srcPath);
 
-		let applied: boolean = false;
+		let hasChanged: boolean = false;
+		let data: string;
 		for(const srcPath of srcPathsList) {
 			if(!srcPath) continue;
 
 			const absoluteSrcPath = absPath(srcPath);
 			if(!existsSync(absoluteSrcPath)) {
-				if(optional) return;
+				if(optional) return {
+					hasChanged: false
+				};
+
 				throw new ReferenceError(`Missing file ${srcPath}`);
 			}
 			if(!force && !(await Bundler.fileModified(absoluteSrcPath))) continue;
@@ -104,11 +113,15 @@ export class Bundler {
 
 			await Bundler.emit(distPath, distContents);
 
-			applied = true;
+			hasChanged = true;
+			data = distContents;
 
 			break;
 		}
 
-		return applied;
+		return {
+			hasChanged,
+			data
+		};
 	}
 }

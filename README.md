@@ -87,9 +87,8 @@ The scaffolded project resembles the following file structure:
     │   │   ├── shared.[css|scss]
     │   │   └── shared.[js|ts]
     │   ├── background.js ❕            # Background script
-    │   ├── content.js ❕               # Content script
     │   └── icon.svg                    # Extension icon
-    └── /static                         # Static assets
+    └── /static                         # Static assets (reference like /static)
         └── image.png
 ```
 
@@ -131,7 +130,7 @@ Markup is automatically wrapped within proper document syntax. There is hence no
 
 ### Style
 
-Stylesheets can either be encoded with CSS (`.css`) or SCSS (`.scss`). Labs specifies a handful of normalized styles (see [global.css](./lib/bundle/global/global.css)).
+Stylesheets can either be encoded with CSS (`.css`) or SCSS (`.scss`). Shared styles (inside the `shared` directory) apply across all targets. Labs, furthermore, specifies a handful of normalized styles (see [global.css](./lib/bundle/global/global.css)).
 
 <sub><code>src/newtab/newtab.css</code></sub>
 
@@ -145,13 +144,20 @@ h1 {
 
 ### Script
 
-Scripts evaluate in the respetive target's global (window) scope. Globals declared in the `shared` target script are furthermore accessible from both targets. Scripts can either be encoded with JavaScript (`.js`) or TypeScript (`.ts`).
+Scripts evaluate in the respetive target's global (window) scope. Both JavaScript (`.js`) and TypeScript (`.ts`) files work out-of-the-box, as well as module bundling, which allows relative imports. To enforce clean scoping, absolute imports, and relative imports beyond a target directory are not allowed. Shared script are furthermore accessible from all targets via macro import (prefixed with `#shared`):
 
+<sub><code>src/shared/constants.js</code></sub>
+
+``` js
+export const GREETINGS = [ "Hello", "Hi", "Hoi" ];
+```
 <sub><code>src/shared/shared.js</code></sub>
 
 ``` js
+import { GREETINGS } from "./constants.js";
+
 function randomGreeting() {
-  return [ "Hello", "Hi", "Hoi" ]
+  return GREETINGS
     .sort(() => Math.round(Math.random()))
     .pop();
 }
@@ -160,6 +166,8 @@ function randomGreeting() {
 <sub><code>src/popup/popup.js</code></sub>
 
 ``` js
+import { randomGreeting } from "#shared/shared.js";
+
 function sayHello() {
   document.querySelector("p")
     .textContent = `${randomGreeting()} from Popup.`;
@@ -211,6 +219,26 @@ Labs introduces a lean single file component (SFC) interface. Every SFC is decla
 A valid SFC file assembles from at most one of the following tags (top-level): `<template>` can contain the component markup. It can be leveraged with [slots](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_templates_and_slots#adding_flexibility_with_slots). `<style>` can contain styles that apply only to the component markup. `<script>` can contain native web component [lifecycle callbacks](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#custom_element_lifecycle_callbacks), and utilize related concepts. A component's DOM object can be accessed through `this.#DOM`.
 
 > SFCs work with SCSS and TypeScript by specifiying a `lang` attribute on the respective tag. This is, `<style lang="scss">` or `<script lang="ts">`, respectively.
+
+### Content Augmentation
+
+The background and content script can optionally be grouped within directories, too. In case of a grouped content script, files to augmentat any individual content page can be placed in the `augmentation` subdirectory:
+> 
+> ```
+> .
+> └── /my-extension
+>     ├── ...
+>     └── /src
+>         ├── ...
+>         ├── /background                 # Optionally group background files
+>             │   helpers.js              # Relative import helper modules
+>             └── background.[js|ts]
+>         └── /content                    # Optionally group content files
+>             ├── augmentation            # UI augmentation files
+>             │   ├── content.html
+>             │   └── content.c[css|scss]
+>             └── content.[js|ts]
+> ```
 
 ### Icon
 
@@ -340,7 +368,7 @@ BAZ=123
 <sub><code>src/background.js</code></sub>
 
 ``` js
-console.log(browser.virtualSession.env.foo);  // "bar"
+console.log(browser.webfuseSession.env.foo);  // "bar"
 ```
 
 > Environment variables are emptied during build, unless debug mode is used.

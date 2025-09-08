@@ -1,8 +1,8 @@
 import * as prettier from "prettier";
 import HTMLMinifier from "html-minifier";
 
-import { Bundler } from "../Bundler.js";
-import { Transpiler } from "../Transpiler.js";
+import { Bundler } from "../mapping/Bundler.js";
+import { Transpiler } from "../mapping/Transpiler.js";
 import { TSfc } from "../sfc.js";
 import { load as loadTemplate, template } from "../templates.js";
 

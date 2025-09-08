@@ -104,37 +104,43 @@ function createHTTPServer(port: number) : Promise<void>{
 					return end(routes[req.url].data, routes[req.url].mime);
 
 				const assetFile = await readDoc(req.url, getAssetPath("preview", "."));
-				if(assetFile)
+				const isContentFile = req.url === "/_assets/content.html";	// TODO: Improve server behavior
+				if(assetFile && !isContentFile)
 					return end(assetFile, MIME[extname(req.url)]);
 
-				let distFile = await readDoc(req.url, DIST_PATH);
+				let distFile = !isContentFile
+					? await readDoc(req.url, DIST_PATH)
+					: assetFile;
 				if(!distFile)
 					return end(await readDoc("404.html"), null, 404);
 
-				if([ "/newtab.html", "/popup.html" ].includes(req.url)) {
+				if([ "/newtab.html", "/popup.html" ].includes(req.url) || isContentFile) {
 					distFile = distFile.toString();
-					if([ "/newtab.html" ].includes(req.url)) {
-						distFile = injectPriorityScript(distFile, "/content.js");
-						distFile = injectPriorityScript(distFile, "/_assets/api/mock.content.js");
-					} else {
+
+					if([ "/newtab.html", "/popup.html" ].includes(req.url)) {
 						distFile = injectPriorityScript(distFile, "/_assets/api/mock.other.js");
+					} else if(isContentFile) {
+						distFile = injectPriorityScript(distFile, "/_assets/api/mock.content.js");
 					}
+
 					distFile = injectPriorityScriptRaw(distFile, `
-						browser.virtualSession.env = ${
+						browser.webfuseSession.env = ${
 	JSON.stringify(
 		Object.fromEntries(
 			(
 				(
-				JSON.parse(
-					((await readDoc("manifest.json", DIST_PATH)) ?? "{}").toString()
-				) as { env: { key: string; value: string; }[]; }
+											JSON.parse(
+												((await readDoc("manifest.json", DIST_PATH)) ?? "{}").toString()
+											) as { env: { key: string; value: string; }[]; }
 				).env ?? []
 			).map(item => [ item.key, item.value ])
 		)
 	)
-}`);
+};
+					`);
 					distFile = injectPriorityScript(distFile, "/_assets/api/mock.js");
 				}
+
 				return end(distFile, MIME[extname(req.url)]);
 			} catch(err) {
 				end(null, null, 500);
@@ -185,51 +191,3 @@ export async function preview() {
 		}
 	};
 }
-
-
-/*
-
-curl -X 'GET' \
-  'https://surfly.online/api/company/users/' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Token ck_***'
-
-curl -X 'POST' \
-  'https://surfly.online/api/spaces/' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Token ck_***' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "name": "labs-foo",
-  "slug": "labs-foo",
-  "type": "solo",
-  "visibility": "members-only",
-  "access_control": "public",
-  "identification": "anonymous",
-  "queue_enabled": false,
-  "is_paused": false,
-  "host_rights": "everyone",
-  "enable_parallel_sessions": true,
-  "is_landing_page_published": false
-}'
-
-curl -X 'POST' \
-  'https://surfly.online/api/spaces/657/members/' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Token ck_***' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "space": 657,
-  "member": 87,
-  "role": "admin"
-}'
-
-curl -X 'POST' \
-  'https://surfly.online/api/spaces/657/sessions/' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Token rk_***' \
-  -d '{
-  "headless": true
-}'
-
-*/

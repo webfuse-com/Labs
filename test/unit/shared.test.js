@@ -1,5 +1,4 @@
 const SHARED_CSS = _readDist("shared.css");
-const SHARED_JS = _readDist("shared.js");
 
 assertIn(`
 :root {
@@ -17,12 +16,3 @@ body {
   padding: 1rem;
 }
 `, SHARED_CSS, "Invalid shared.css");
-
-assertIn(`
-(() => {
-  // <stdin>
-  window.randomGreeting = function() {
-    return ["Hello", "Hi", "Hoi"].sort(() => Math.round(Math.random())).pop();
-  };
-})();
-`, SHARED_JS, "Invalid shared.js");

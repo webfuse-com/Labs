@@ -1,3 +1,4 @@
 {
-    "tagNamePrefix": "sfc-"
+    "sfcTagNamePrefix": "sfc-",
+    "sharedModulesPrefix": "#shared"
 }

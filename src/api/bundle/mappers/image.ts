@@ -1,6 +1,6 @@
 import sharp from "sharp";
 
-import { Bundler } from "../Bundler.js";
+import { Bundler } from "../mapping/Bundler.js";
 
 
 /**

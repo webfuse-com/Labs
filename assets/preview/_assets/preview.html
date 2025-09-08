@@ -8,6 +8,33 @@
         <script>
             console.log("%cWebfuse Labs", "color: rgb(222, 74, 183); font-weight: bold;");
 
+            let highlightTabTimeout;
+            function highlightTab(name) {
+                highlightTabTimeout = setTimeout(() => {
+                    document.querySelector("#main .active")
+                        .classList
+                        .remove("active");
+                    document.querySelector(`#${name}`)
+                        .classList
+                        .add("active");
+                }, 1000);
+            }
+            function abortHighlightTab(name) {
+                clearTimeout(highlightTabTimeout);
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                const registerTabs = (name) => {
+                    const element = document.querySelector(`#${name}`);
+
+                    element.addEventListener("mouseenter", () => highlightTab(name));
+                    element.addEventListener("mouseleave", abortHighlightTab);
+                };
+
+                registerTabs("newtab");
+                registerTabs("content");
+            });
+
             fetch("/ws")
                 .then(res => res.text())
                 .then(url => {
@@ -78,9 +105,14 @@
         </header>
         <main>
             <div class="wrapper">
-                <section id="newtab">
+                <section id="main">
                     <div>
-                        <iframe src="/newtab.html"></iframe>
+                        <div id="content">
+                            <iframe src="/_assets/content.html"></iframe>
+                        </div>
+                        <div id="newtab" class="active">
+                            <iframe src="/newtab.html"></iframe>
+                        </div>
                     </div>
                 </section>
                 <section id="popup">

@@ -1,1 +1,1 @@
-browser.virtualSession.log("Example...");
+browser.webfuseSession.log("Example...");

@@ -1,7 +1,4 @@
-import * as util from "./util";
-
-browser.virtualSession.log("Example...");
-
+browser.webfuseSession.log("Example...");
 
 browser.runtime.onMessage.addListener((msg, sender) => {
     console.log("Received message:", msg);

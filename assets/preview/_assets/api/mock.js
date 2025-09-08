@@ -7,7 +7,7 @@
 const _MOCK = {
     runtime: {},
     tabs: {},
-    virtualSession: {}
+    webfuseSession: {}
 };
 
 
@@ -32,11 +32,11 @@ window.browser = {
             return handleGet("tabs", prop);
         }
     }),
-    virtualSession: new Proxy({}, {
+    webfuseSession: new Proxy({}, {
         get(target, prop) {
             if(prop === "env") return Reflect.get(target, prop);
 
-            return handleGet("virtualSession", prop);
+            return handleGet("webfuseSession", prop);
         }
     })
 };

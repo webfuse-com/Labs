@@ -9,20 +9,21 @@ import { rmSync, mkdirSync, existsSync } from "fs";
 import { join } from "path";
 import EventEmitter from "events";
 
-import { SRC_PATH, DIST_PATH, TARGET_DIRS, STATIC_PATH, STATIC_DIR } from "../../constants.js";
+import { SRC_PATH, DIST_PATH, STATIC_PATH, STATIC_DIR } from "../../constants.js";
 import { renderComponents } from "./sfc.js";
 
-import { Bundler } from "./Bundler.js";
+import { Bundler } from "./mapping/Bundler.js";
 import { getAssetPath } from "../assets.js";
 import { getPackage } from "../package.js";
 
 import { converterSVG_16, converterSVG_32, converterSVG_64, converterSVG_128 } from "./mappers/image.js";
 import { bundlerSCSS, bundlerCSS, minifierCSS } from "./mappers/style.js";
 import { bundlerHTML } from "./mappers/markup.js";
-import { minifierJS, bundlerComponentJS, bundlerComponentTS } from "./mappers/script.js";
+import { bundlerJS, bundlerTS } from "./mappers/script.js";
 import { bundlerManifestJSON } from "./mappers/json.js";
 
 
+const RICH_DIRS = [ "newtab", "popup", { name: "content", nestedOnly: false, applyAugmentation: true } ];
 const WATCH_INTERVAL: number = 1000;
 
 
@@ -35,7 +36,6 @@ const readGlobal = async (ext: string) => {
  */
 const globals: Record<string, string> = {
 	css: await readGlobal("css"),
-	jss: await readGlobal("js")
 };
 /**
  * Global SFCs data.
@@ -79,9 +79,9 @@ async function bundleAll(debug: boolean = false): Promise<TBundleResults> {
 	const srcPath = (path: string) => existsSync(join(SRC_PATH, path))
 		? path
 		: null;
-	const getSrcPath = (name: string, ext: string, path: string = "."): null|string => {
-		return srcPath(join(path, [ name, ext ].join(".")))
-			|| srcPath(join(path, ext, [ name, ext ].join(".")));
+	const getSrcPath = (name: string, ext: string, nestedOnly: boolean = false, subDir = "."): null|string => {
+		return srcPath(join(name, subDir, [ name, ext ].join(".")))
+			|| (!nestedOnly ? srcPath(join(subDir, [ name, ext ].join("."))) : null);
 	};
 
 	await bundlerManifestJSON.apply([
@@ -90,38 +90,89 @@ async function bundleAll(debug: boolean = false): Promise<TBundleResults> {
 		srcPath("../.env")
 	], "manifest.json", debug);
 
-	await bundlerComponentTS.apply(getSrcPath("background", "ts"), "background.js", debug);
-	await bundlerComponentJS.apply(getSrcPath("background", "js"), "background.js", debug);		// prefer .js over .ts
-	await bundlerComponentTS.apply(getSrcPath("content", "ts"), "content.js", debug);
-	await bundlerComponentJS.apply(getSrcPath("content", "js"), "content.js", debug);			// prefer .js over .ts
+	// TODO: Combine alternative switch in a single call
+	await bundlerTS.apply(getSrcPath("background", "ts"), "background.js", debug);
+	await bundlerJS.apply(getSrcPath("background", "js"), "background.js", debug);	// prefer .js over .ts
 
-	await bundlerComponentTS.apply(getSrcPath("shared", "ts", "shared"), "shared.js", debug);
-	await bundlerComponentJS.apply(getSrcPath("shared", "js", "shared"), "shared.js", debug);	// prefer .js over .ts
-	let forceComponentRender = await bundlerSCSS.apply(getSrcPath("shared", "scss", "shared"), "shared.css", debug);
-	    forceComponentRender = await bundlerCSS.apply(getSrcPath("shared", "css", "shared"), "shared.css", debug) || forceComponentRender;	// prefer .css over .scss
+	// await bundlerTS.apply(getSrcPath("shared", "ts", true), "shared.js", debug);
+	// await bundlerJS.apply(getSrcPath("shared", "js", true), "shared.js", debug);	// prefer .js over .ts
+	const forceComponentRender = (
+		await bundlerSCSS.apply(getSrcPath("shared", "scss", true), "shared.css", debug)
+		|| await bundlerCSS.apply(getSrcPath("shared", "css", true), "shared.css", debug)
+	).hasChanged;	// prefer .css over .scss
 
 	const sfcShared = await renderComponents(join(SRC_PATH, "shared/components"), forceComponentRender);
 
-	await Promise.all(TARGET_DIRS
-        .map(async (target: string) => {
-        	const getTargetSrcPath = (ext: string): null|string => {
-        		return getSrcPath(target, ext, target);
+	await Promise.all(RICH_DIRS
+		.map((target) => {
+			return (typeof(target) === "string")
+				? {
+					name: target,
+					nestedOnly: true,
+					applyAugmentation: false
+				}
+				: target;
+		})
+        .map(async (targetObj) => {
+        	const getTargetSrcPath = (ext: string, subDir = ".") => {
+        		return getSrcPath(targetObj.name, ext, targetObj.nestedOnly, subDir);
         	};
-        	const getDistPath = (ext: string) => [ target, ext ].join(".");
+        	const getDistPath = (ext: string) => [ targetObj.name, ext ].join(".");
 
-        	const sfc = await renderComponents(join(SRC_PATH, target, "components"), forceComponentRender);
+        	const sfc = await renderComponents(join(SRC_PATH, targetObj.name, "components"), forceComponentRender);
         	const name = (await getPackage()).name ?? "";
 
-        	await bundlerHTML
-                .apply(getTargetSrcPath("html"), getDistPath("html"), debug, true, (sfcShared.wasModified || sfc.wasModified), {
-                	name: `${name.charAt(0).toUpperCase()}${name.slice(1)}`,
-                	target,
-                	sfcGlobal, sfcShared, sfc
-                });
-        	await bundlerComponentTS.apply(getTargetSrcPath("ts"), getDistPath("js"), debug);
-        	await bundlerComponentJS.apply(getTargetSrcPath("js"), getDistPath("js"), debug);	// prefer .js over .ts
-        	await bundlerSCSS.apply(getTargetSrcPath("scss"), getDistPath("css"), debug);
-        	await bundlerCSS.apply(getTargetSrcPath("css"), getDistPath("css"), debug);			// prefer .css over .scss
+        	const html = (
+        		await bundlerHTML
+					.apply(
+						getTargetSrcPath("html", targetObj.applyAugmentation ? "augmentation" : ""),
+						getDistPath("html"),
+						debug,
+						targetObj.nestedOnly,
+						(sfcShared.wasModified || sfc.wasModified),
+						{
+							name: `${name.charAt(0).toUpperCase()}${name.slice(1)}`,
+							target: targetObj.name,
+							sfcGlobal, sfcShared, sfc
+						}
+					)
+        	).data;
+
+        	const css = [
+        		await bundlerSCSS.apply(
+        			getTargetSrcPath("scss", targetObj.applyAugmentation ? "augmentation" : ""),
+        			getDistPath("css"),
+        			debug
+        		),
+        		await bundlerSCSS.apply(
+        			getTargetSrcPath("css", targetObj.applyAugmentation ? "augmentation" : ""),
+        			getDistPath("css"),
+        			debug
+        		),	// prefer .css over .scss`
+        	]
+				.find((css) => css?.data)
+				?.data;
+
+        	const renderScript = (ext: string, subDir = ".") => {
+        		return (ext === "ts" ? bundlerTS : bundlerJS)
+					.apply(
+						getTargetSrcPath(ext, subDir),
+						getDistPath("js"),
+						debug,
+						true,
+						false,
+						targetObj.applyAugmentation
+							? {
+								html,
+								css
+							} : null
+					);
+        	};
+
+        	await renderScript("ts", "ts");
+        	await renderScript("ts");	// prefer target level over lang-scoped
+        	await renderScript("js", "js");
+        	await renderScript("js");	// prefer .js over .ts
         }));
 
 	const fileCount = Bundler.flushFileCount();
@@ -148,7 +199,7 @@ export async function bundle(debug?: boolean): Promise<EventEmitter> {
         && await cp(STATIC_PATH, join(DIST_PATH, STATIC_DIR), { recursive: true });
 
 	await Bundler.emit("global.css", await minifierCSS.apply(globals.css, debug));
-	await Bundler.emit("global.js", await minifierJS.apply(globals.js, debug));
+	// await Bundler.emit("global.js", await minifierJS.apply(globals.js, debug));
 
 	// Expose event emitter to allow listening to bundleAll() calls.
 	const emitter = new EventEmitter();

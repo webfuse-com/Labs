@@ -120,7 +120,6 @@ section {
     height: fit-content;
     background-color: var(--bg-translucent);
     backdrop-filter: blur(30px);
-    border: var(--border);
     overflow: visible;
     filter: opacity(0.8);
     transition: filter 600ms, box-shadow 600ms;
@@ -131,13 +130,7 @@ section {
 }
 section:hover {
     filter: opacity(1);
-    box-shadow: 0 0 var(--space) 0 var(--color-translucent);
     transition-delay: 0ms;
-}
-
-section div {
-    border-radius: calc(0.25 * var(--space));
-    overflow: hidden;
 }
 
 iframe {
@@ -172,14 +165,52 @@ footer {
     }
 }
 
-#newtab {
+#main {
     width: 100%;
     height: 100%;
     animation-name: fade-up;
 }
 
-#newtab div {
+#main div {
+    width: 100%;
     height: 100%;
+}
+
+#main div > div {
+    position: absolute;
+    width: calc(100% - 2rem);
+    height: calc(100% - 2rem);
+    border: var(--border);
+    border-radius: calc(0.25 * var(--space));
+    box-shadow: 0 0 var(--space) 0 var(--color-translucent);
+    overflow: hidden;
+    transition: filter 1s;
+    z-index: 0;
+    filter: brightness(0.75);
+}
+#main div > div iframe {
+    pointer-events: none;
+}
+
+#main div > div:hover {
+    filter: brightness(1.0);
+}
+#main div > div.active {
+    z-index: 1;
+    filter: brightness(1.0);
+}
+#main div > div.active iframe {
+    pointer-events: auto;
+}
+
+#main #content {
+    margin-top: 2rem;
+    margin-left: 2rem;
+}
+
+#main #newtab {
+    margin-bottom: 2rem;
+    margin-right: 2rem;
 }
 
 @keyframes fade-down {
@@ -198,6 +229,10 @@ footer {
 
 #popup {
     margin-left: var(--space);
+    border: var(--border);
+    border-radius: calc(0.25 * var(--space));
+    box-shadow: 0 0 var(--space) 0 var(--color-translucent);
+    overflow: hidden;
     animation-name: fade-down;
 }
 #popup::before {

@@ -5,8 +5,8 @@
 import CSSMinifier from "clean-css";
 import { compileString as transpileSCSS } from "sass";
 
-import { Bundler } from "../Bundler.js";
-import { Transpiler } from "../Transpiler.js";
+import { Bundler } from "../mapping/Bundler.js";
+import { Transpiler } from "../mapping/Transpiler.js";
 
 
 /**

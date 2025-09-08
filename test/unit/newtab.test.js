@@ -3,17 +3,17 @@ const NEWTAB_CSS = _readDist("newtab.css");
 const NEWTAB_JS = _readDist("newtab.js");
 
 assertIn(`
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Test</title>
-        <link rel="stylesheet" href="./global.css" />
-        <link rel="stylesheet" href="./shared.css" />
-        <link rel="stylesheet" href="./newtab.css" />
-        <script src="./global.js"></script>
-        <script src="./shared.js"></script>
-        <script src="./newtab.js"></script>
-    </head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Test</title>
+    <link rel="stylesheet" href="./global.css" />
+    <link rel="stylesheet" href="./shared.css" />
+    <link rel="stylesheet" href="./newtab.css" />
+    <script src="./global.js"></script>
+    <!-- <script src="./shared.js"></script> -->
+    <script src="./newtab.js"></script>
+  </head>
 `, NEWTAB_HTML, "Invalid head (newtab.html)");
 
 assertIn(`
@@ -65,6 +65,19 @@ h1 {
   
 assertIn(`
 (() => {
+  // src/shared/js/constants.js
+  var GREETINGS = ["Hello", "Hi", "Hoi"];
+
+  // src/shared/js/util/util.js
+  function getGreeting() {
+    return GREETINGS.sort(() => Math.round(Math.random())).pop();
+  }
+
+  // src/shared/js/shared.js
+  function randomGreeting() {
+    return getGreeting();
+  }
+
   // src/newtab/ts/message.ts
   function sendMessage() {
     browser.tabs.sendMessage(0, {
@@ -78,5 +91,4 @@ assertIn(`
   };
   setTimeout(sendMessage, 1500);
 })();
-
 `, NEWTAB_JS, "Invalid script (newtab.js)");
