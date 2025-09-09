@@ -2,8 +2,6 @@
 
 # Webfuse Labs
 
-> [**Webfuse**](https://webfuse.com) is a web augmentation platform to instantly extend, automate & share any web session. Webfuse extensions are browser extensions, but enhanced with a powerful augmentation API.
-
 **Labs** is a framework that facilitates web extension development: Build with a bundler made for extensions, in a local preview environment. It supports Typescript and SCSS out-of-the-box, and also [Vue](https://vuejs.org/guide/scaling-up/sfc.html)-inspired single file components. Imagine [Vite](https://vite.dev), but for extensions.
 
 <p align="center">
@@ -25,6 +23,8 @@
 
 - [Node.js + NPM](https://nodejs.org) v22+/v10+
 - [Webfuse](https://webfuse.com/studio/auth/signup) Account (optional, recommended)
+
+> [**Webfuse**](https://webfuse.com) is a web augmentation platform to instantly extend, automate & share any web session. Webfuse extensions are browser extensions, but enhanced with a powerful augmentation API.
 
 ## Installation
 
@@ -231,8 +231,8 @@ The background and content script can optionally be grouped within directories, 
 >     └── /src
 >         ├── ...
 >         ├── /background                 # Optionally group background files
->             │   helpers.js              # Relative import helper modules
->             └── background.[js|ts]
+>         │   │   helpers.js              # Relative import helper modules
+>         │   └── background.[js|ts]
 >         └── /content                    # Optionally group content files
 >             ├── augmentation            # UI augmentation files
 >             │   ├── content.html
@@ -368,7 +368,7 @@ BAZ=123
 <sub><code>src/background.js</code></sub>
 
 ``` js
-console.log(browser.webfuseSession.env.foo);  // "bar"
+console.log(browser.webfuseSession.env.FOO);  // "bar"
 ```
 
 > Environment variables are emptied during build, unless debug mode is used.
