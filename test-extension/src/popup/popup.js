@@ -2,6 +2,8 @@
  * Evaluates only in the Popup.
  */
 
+import { randomGreeting} from "#shared/shared.js";
+
 window.sayHello = function() {
     document.querySelector("p")
         .textContent = `${randomGreeting()} from Popup.`;

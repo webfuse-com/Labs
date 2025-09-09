@@ -11,11 +11,20 @@ const _MOCK = {
 };
 
 
+_MOCK.runtime.onMessage = {
+    addListener(cb) {
+        window.addEventListener("message", e => {
+            cb(e.data.data, e.data.sender);
+        });
+    }
+};
+
+
 const handleGet = (scope, prop) => {
     if(_MOCK[scope][prop])
         return _MOCK[scope][prop];
 
-    console.debug(`Dry use of browser.${scope}.${prop}.`);
+    console.debug(`Dry use of %cbrowser.${scope}.${prop}`, "color: blue;");
 
     return () => Promise.resolve();
 };
@@ -40,13 +49,5 @@ window.browser = {
         }
     })
 };
-
-
-_MOCK.runtime.onMessage.addListener = function(cb) {
-    window.addEventListener("message", e => {
-        cb(e.data.data, e.data.sender);
-    });
-};
-
 
 window.chrome = window.browser;

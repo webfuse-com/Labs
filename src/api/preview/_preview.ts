@@ -84,11 +84,11 @@ function createHTTPServer(port: number) : Promise<void>{
             		mime: "text/plain"
             	},
             	"/background": {
-            		data: `(() => {
+            		data: `((browser) => {
                         const document = undefined;
                         const window = undefined;
                         ${((await readDoc("background.js", DIST_PATH) ?? "")).toString()}
-                    })();`,
+                    })(browser);`,
             		mime: "text/javascript"
             	}
             };
