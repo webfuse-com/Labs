@@ -66,7 +66,8 @@
                 });
 
                 window.addEventListener("message", e => {
-                    [ "newtab", "popup"]
+                    [ "content" ]
+                        .concat(e.data.toTab ? [ "newtab", "popup" ] : [])
                         .forEach(section => {
                             document.querySelector(`#${section} iframe`)
                                 .contentWindow
@@ -121,7 +122,9 @@
                     </div>
                 </section>
             </div>
-            <iframe id="background" src="/_assets/sandbox.background.html" style="display: none;"></iframe>
+            <div id="background">
+                <iframe src="/_assets/sandbox.background.html" style="display: none;"></iframe>
+            </div>
         </main>
         <footer>&copy; Surfly B.V.</footer>
     </body>

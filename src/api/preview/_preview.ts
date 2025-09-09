@@ -117,11 +117,8 @@ function createHTTPServer(port: number) : Promise<void>{
 				if([ "/newtab.html", "/popup.html" ].includes(req.url) || isContentFile) {
 					distFile = distFile.toString();
 
-					if([ "/newtab.html", "/popup.html" ].includes(req.url)) {
-						distFile = injectPriorityScript(distFile, "/_assets/api/mock.other.js");
-					} else if(isContentFile) {
-						distFile = injectPriorityScript(distFile, "/_assets/api/mock.content.js");
-					}
+					isContentFile
+						&& injectPriorityScript(distFile, "/_assets/api/mock.tabs.js");
 
 					distFile = injectPriorityScriptRaw(distFile, `
 						browser.webfuseSession.env = ${

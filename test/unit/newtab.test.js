@@ -70,7 +70,7 @@ assertIn(`
 
   // src/shared/js/util/util.js
   function getGreeting() {
-    return GREETINGS.sort(() => Math.round(Math.random())).pop();
+    return GREETINGS.sort(() => Math.round(Math.random()))[0];
   }
 
   // src/shared/js/shared.js
@@ -80,6 +80,9 @@ assertIn(`
 
   // src/newtab/ts/message.ts
   function sendMessage() {
+    browser.runtime.sendMessage({
+      from: "newtab"
+    });
     browser.tabs.sendMessage(0, {
       from: "newtab"
     });
@@ -89,6 +92,12 @@ assertIn(`
   window.sayHello = function() {
     document.querySelector("p").textContent = \`\${randomGreeting()} from Newtab.\`;
   };
+  browser.runtime.onMessage.addListener((message, sender) => {
+    console.log(\`Received message from \${sender.url} in newtab:\`, {
+      message,
+      sender
+    });
+  });
   setTimeout(sendMessage, 1500);
 })();
 `, NEWTAB_JS, "Invalid script (newtab.js)");

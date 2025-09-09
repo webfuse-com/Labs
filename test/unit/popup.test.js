@@ -66,14 +66,34 @@ h1 {
 
 assertIn(`
 (() => {
+  // src/shared/js/constants.js
+  var GREETINGS = ["Hello", "Hi", "Hoi"];
+
+  // src/shared/js/util/util.js
+  function getGreeting() {
+    return GREETINGS.sort(() => Math.round(Math.random()))[0];
+  }
+
+  // src/shared/js/shared.js
+  function randomGreeting() {
+    return getGreeting();
+  }
+
   // <stdin>
   window.sayHello = function() {
     document.querySelector("p").textContent = \`\${randomGreeting()} from Popup.\`;
   };
-  browser.runtime.onMessage.addListener((msg, sender) => {
-    console.log("Received message:", msg);
-    console.log("From:", sender);
+  browser.runtime.onMessage.addListener((message, sender) => {
+    console.log(\`Received message from \${sender.url} in popup:\`, {
+      message,
+      sender
+    });
+  });
+  browser.runtime.sendMessage({
+    from: "newtab"
+  });
+  browser.tabs.sendMessage(0, {
+    from: "newtab"
   });
 })();
-
 `, POPUP_JS, "Invalid script (popup.js)");

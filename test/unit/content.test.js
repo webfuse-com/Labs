@@ -15,10 +15,16 @@ window.CONTENT_CSS = \`strong {
 (() => {
   // <stdin>
   browser.webfuseSession.log("Example...");
-  browser.runtime.onMessage.addListener((msg, sender) => {
-    console.log("Received message:", msg);
-    console.log("From:", sender);
+  browser.runtime.onMessage.addListener((message, sender) => {
+    console.log(\`Received message from \${sender.url} in content:\`, {
+      message,
+      sender
+    });
   });
-  setTimeout(util.sendMessage, 3e3);
+  setTimeout(() => {
+    browser.runtime.sendMessage({
+      from: "content"
+    });
+  }, 3e3);
 })();
 `, CONTENT_JS, "Invalid content.js");

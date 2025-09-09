@@ -10,10 +10,11 @@ window.sayHello = function(): void {
         .textContent = `${randomGreeting()} from Newtab.`;
 }
 
-browser.runtime.onMessage.addListener((msg, sender) => {
-    console.log("> content");
-    console.log("Received message:", msg);
-    console.log("From:", sender);
+browser.runtime.onMessage.addListener((message, sender) => {
+    console.log(`Received message from ${sender.url} in newtab:`, {
+        message,
+        sender
+    });
 });
 
 setTimeout(sendMessage, 1500);
