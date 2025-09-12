@@ -5,13 +5,15 @@
 **Labs** is a framework that facilitates web extension development: Build with a bundler made for extensions, in a local preview environment. It supports Typescript and SCSS out-of-the-box, and also [Vue](https://vuejs.org/guide/scaling-up/sfc.html)-inspired single file components. Imagine [Vite](https://vite.dev), but for extensions.
 
 <p align="center">
-  <a href="#browser-webfuse-api" target="_blank"><img src="./.github/figure-1.png" alt="Labs' features: Bundler, SFCs, and Preview" width="675"></a>
+  <a href="#webfuse-labs" target="_blank"><img src="./.github/figure-1.png" alt="Labs' features: Bundler, SFCs, and Preview""></a>
 </p>
 
 1. [**Prerequisites**](#prerequisites)
 2. [**Installation**](#installation)
 3. [**Preview**](#preview)
 4. [**Assets**](#assets)
+4. [**Single File Components**](#single-file-components)
+4. [**Content Augmentation**](#content-augmentation)
 5. [**Browser & Webfuse APIs**](#browser--webfuse-apis)
 6. [**Upload**](#upload)
 7. [**CLI Reference**](#cli-reference)
@@ -23,8 +25,7 @@
 
 - [Node.js + NPM](https://nodejs.org) v22+/v10+
 - [Webfuse](https://webfuse.com/studio/auth/signup) Account (optional, recommended)
-
-> [**Webfuse**](https://webfuse.com) is a web augmentation platform to instantly extend, automate & share any web session. Webfuse extensions are browser extensions, but enhanced with a powerful augmentation API.
+  > [**Webfuse**](https://webfuse.com) is a web augmentation platform to instantly extend, automate & share any web session. Webfuse extensions are browser extensions, but enhanced with a powerful augmentation API.
 
 ## Installation
 
@@ -60,7 +61,7 @@ labs preview
 
 The preview app is a browser application. Open the address that is printed to the console in a web browser. The preview environment implements hot module replacement. This is, the provided UI always presents the latest bundle.
 
-<a href="#local-development" target="_blank"><img src="./.github/figure-2.png" alt="Webfuse Labs Preview Environment"></a>
+<a href="#preview" target="_blank"><img src="./.github/figure-2.png" alt="Webfuse Labs Preview Environment"></a>
 
 > `labs` commands that affect a specific extension work in its root directory. With other words, the current working directory (`pwd`) needs to correspond to the extensions project's root directory.
 
@@ -133,7 +134,7 @@ h1 {
 
 ### Script
 
-Scripts evaluate in the respetive target's global (window) scope. Both JavaScript (`.js`) and TypeScript (`.ts`) files work out-of-the-box, as well as module bundling, which allows relative imports. To enforce clean scoping, absolute imports, and relative imports beyond a target directory are not allowed. Shared script are furthermore accessible from all targets via macro import (prefixed with `#shared`):
+Scripts evaluate in the respective target's global (window) scope. Both JavaScript (`.js`) and TypeScript (`.ts`) files work out-of-the-box, as well as module bundling, which allows relative imports. To enforce clean scoping, absolute imports, and relative imports beyond a target directory are not allowed. Shared script are furthermore accessible from all targets via macro import (prefixed with `#shared`):
 
 <sub><code>src/shared/constants.js</code></sub>
 
@@ -163,7 +164,21 @@ function sayHello() {
 }
 ```
 
-### Single File Components
+### Icon
+
+An optional extension icon can be provided as an SVG. The Labs bundler creates different size PNGs for the icon to be compatible across browsers and devices.
+
+### Static Assets
+
+Provide static assets, such as images to the `/static` directory.
+
+<sub><code>src/popup/popup.html</code></sub>
+
+``` html
+<img src="./static/image.png">
+```
+
+## Single File Components
 
 Labs introduces a lean single file component (SFC) interface. Every SFC is declared in its own file, which must be a direct child of a `/components` directory. A dedicated `/components` directory works for each asset directory – i.e. a target or the shared directory. An SFC's filename (without the extension) dictates the related tag name. A tag name is furthermore always prefixed (namespaced) with `sfc-`.
 
@@ -206,39 +221,57 @@ A valid SFC file assembles from at most one of the following tags (top-level): `
 
 > SFCs work with SCSS and TypeScript by specifiying a `lang` attribute on the respective tag. This is, `<style lang="scss">` or `<script lang="ts">`, respectively.
 
-### Content Augmentation
+## Content Augmentation
 
 The background and content script can optionally be grouped within directories, too. In case of a grouped content script, files to augmentat any individual content page can be placed in the `augmentation` subdirectory:
-> 
-> ```
-> .
-> └── /my-extension
->     ├── ...
->     └── /src
->         ├── ...
->         ├── /background                 # Optionally group background files
->         │   │   helpers.js              # Relative import helper modules
->         │   └── background.[js|ts]
->         └── /content                    # Optionally group content files
->             ├── augmentation            # UI augmentation files
->             │   ├── content.html
->             │   └── content.c[css|scss]
->             └── content.[js|ts]
-> ```
 
-### Icon
-
-An optional extension icon can be provided as an SVG. The Labs bundler creates different size PNGs for the icon to be compatible across browsers and devices.
-
-### Static Assets
-
-Provide static assets, such as images to the `/static` directory.
-
-<sub><code>src/popup/popup.html</code></sub>
-
-``` html
-<img src="./static/image.png">
 ```
+.
+└── /my-extension
+    ├── ...
+    └── /src
+        ├── ...
+        ├── /background                 # Optionally group background files
+        │   │   helpers.js              # Relative import helper modules
+        │   └── background.[js|ts]
+        └── /content                    # Optionally group content files
+            ├── augmentation            # UI augmentation files
+            │   ├── content.html
+            │   └── content.c[css|scss]
+            └── content.[js|ts]
+```
+
+Augmentation exists on top of actually browsed pages' content. It is encapsulated from the respective window scope, except for the accessor identifier `window.AUGMENTATION`. The accessor represents the root node (host) of the augmentation component DOM subtree.
+
+<sub><code>src/content/augmentation/content.html</code></sub>
+
+``` js
+<span id="dynamic"></span>
+```
+
+<sub><code>src/content/augmentation/content.css</code></sub>
+
+``` css
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+```
+
+<sub><code>src/content/content.js</code></sub>
+
+``` js
+document.addEventListener("DOMContentLoaded", () => {
+  window.AUGMENTATION
+    .querySelector("#dynamic")
+    .textContent = `Today is: ${new Date().toLocaleDateString()}`;
+});
+```
+
+<a href="#content-augmentation" target="_blank"><img src="./.github/figure-3.png" alt="Webfuse Labs Content Augmentation" width="500"></a>
+
+> The second layer of the lefthand side preview pane simulates how the extension works in a third-party page (content). Keep hovering a layer to activate it, i.e., move it to the top. 
 
 ## Browser & Webfuse APIs
 
@@ -257,9 +290,12 @@ browser.runtime
 
 | Property Chain | State |
 | :- | :- |
-| `browser.runtime.onMessage.addListener()` | _partial_ |
-| `browser.runtime.sendMessage()` | _partial_ |
-| `browser.tabs.sendMessage()` | _partial_ |
+| `browser.runtime.onMessage.addListener()` | ✔ |
+| `browser.runtime.sendMessage()` | ✔ |
+| `browser.tabs.sendMessage()` | ✔ |
+| `browser.browserAction.resizePopup()` | ⏳ |
+| `browser.browserAction.detachPopup()` | ⏳ |
+| `browser.browserAction.attachPopup()` | ⏳ |
 
 > API mocking is work in progress.
 

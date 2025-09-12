@@ -10,15 +10,13 @@ assertIn(`
     <link rel="stylesheet" href="./global.css" />
     <link rel="stylesheet" href="./shared.css" />
     <link rel="stylesheet" href="./newtab.css" />
-    <script src="./global.js"></script>
-    <!-- <script src="./shared.js"></script> -->
     <script src="./newtab.js"></script>
   </head>
 `, NEWTAB_HTML, "Invalid head (newtab.html)");
 
 assertIn(`
-    <body>
-        <template id="
+  <body>
+    <template id="t-
 `, NEWTAB_HTML, "SFCs not rendered (newtab.html)");
 
 assertIn(`
@@ -40,6 +38,7 @@ assertIn(`
               super();
               this.#DOM = this.attachShadow({ mode: "closed" });
               this.#DOM.appendChild(
+                document.querySelector("#t-
 `, NEWTAB_HTML, "Shared SFC not rendered (newtab.html)");
 
 assertNotIn(`

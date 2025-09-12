@@ -13,3 +13,9 @@ setTimeout(() => {
             from: "content"
         });
 }, 3000);
+
+document.addEventListener("DOMContentLoaded", () => {
+    window.AUGMENTATION
+        .querySelector("#dynamic")
+        .textContent = `Today is: ${new Date().toLocaleDateString()}`;
+});

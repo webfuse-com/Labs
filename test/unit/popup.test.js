@@ -10,8 +10,6 @@ assertIn(`
     <link rel="stylesheet" href="./global.css" />
     <link rel="stylesheet" href="./shared.css" />
     <link rel="stylesheet" href="./popup.css" />
-    <script src="./global.js"></script>
-    <!-- <script src="./shared.js"></script> -->
     <script src="./popup.js"></script>
   </head>
 `, POPUP_HTML, "Invalid head (popup.html)");

@@ -133,6 +133,7 @@ async function bundleAll(debug: boolean = false): Promise<TBundleResults> {
 						{
 							name: `${name.charAt(0).toUpperCase()}${name.slice(1)}`,
 							target: targetObj.name,
+							noTemplate: targetObj.applyAugmentation,
 							sfcGlobal, sfcShared, sfc
 						}
 					)

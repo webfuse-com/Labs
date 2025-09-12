@@ -22,8 +22,9 @@ export const bundlerHTML = new Bundler(async (html: string, debug, _, options: {
     sfcGlobal: TSfc;
     sfcShared: TSfc;
     sfc: TSfc;
+	noTemplate?: boolean;
 }) => {
-	let renderedHtml = MARKUP_TEMPLATE;
+	let renderedHtml = !options.noTemplate ? MARKUP_TEMPLATE : "<!-- @HTML -->";
 	renderedHtml = template(renderedHtml, "NAME", options.name);
 	renderedHtml = template(renderedHtml, "TARGET", options.target);
 	renderedHtml = template(renderedHtml, "GLOBAL_SFC_HTML", options.sfcGlobal.data.join("\n"));
