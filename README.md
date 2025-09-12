@@ -102,17 +102,6 @@ labs bundle
 
 The bundler automatically runs with the preview environment. Once your preview is up and running, there is no need to run the `bundle` command everytime you edited the source.
 
-> Sometimes, an asset is assembled from multiple files. Assets can also be wrapped by a directory named like their type. For instance:
->
-> ```
-> └── /newtab
->     ├── newtab.html
->     ├── newtab.css
->     └── ts                # Directory wrapping
->         ├── newtab.ts
->         └── constants.ts
-> ```
-
 > You do not have to specify a `manifest.json`. Labs takes care of all the metadata. In particular, it copies the name and version fields from `package.json`.
 
 ### Markup
@@ -130,7 +119,7 @@ Markup is automatically wrapped within proper document syntax. There is hence no
 
 ### Style
 
-Stylesheets can either be encoded with CSS (`.css`) or SCSS (`.scss`). Shared styles (inside the `shared` directory) apply across all targets. Labs, furthermore, specifies a handful of normalized styles (see [global.css](./lib/bundle/global/global.css)).
+Stylesheets can either be encoded with CSS (`.css`) or SCSS (`.scss`). Shared styles (inside the `shared` directory) apply across all targets. Labs, furthermore, specifies a handful of normalized styles (see [global.css](./assets/bundle/globals/global.css)).
 
 <sub><code>src/newtab/newtab.css</code></sub>
 
@@ -173,9 +162,6 @@ function sayHello() {
     .textContent = `${randomGreeting()} from Popup.`;
 }
 ```
-
-> Scripts support use of [ES import](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import) statements (`import`).
-> The shared script is loaded alongside the target script. It is recommended to not import from shared to target module. Instead, keep it for global scope (`window`) declarations if needed.
 
 ### Single File Components
 
@@ -256,7 +242,7 @@ Provide static assets, such as images to the `/static` directory.
 
 ## Browser & Webfuse APIs
 
-The Labs preview environment primarily enables incremental development of the extension UI. Extensions do, certainly, subsist on [Browser APIs](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API), and the [Webfuse API](https://docs.surfly.com/webfuse/extensions/api_reference). API-based functionality, on the other hand, is strongly tied to a browser and session environment.
+The Labs preview environment primarily enables incremental development of the extension UI. Extensions do, certainly, subsist on [Browser APIs](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API), and the [Webfuse API](https://dev.webfuse.com/reference/extension-api/). API-based functionality, on the other hand, is strongly tied to a browser and session environment.
 
 A Labs preview only mocks what is relevant to an extension's components. Complementary API properties are considered 'dry': They exist for completeness, but a call does nothing but return an empty promise, and log a debug message. 
 
@@ -382,5 +368,5 @@ console.log(browser.webfuseSession.env.FOO);  // "bar"
 - [Introducing: Web Augmentation](https://www.webfuse.com/blog/web-augmentation)
 
 <p align="right">
-  <sub>&copy; Surfly B.V.</sub>
+  <sub>&copy; Surfly BV</sub>
 </p>

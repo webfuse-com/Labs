@@ -2,7 +2,8 @@
  * Evaluates only in the Popup.
  */
 
-import { NAME } from "./js/constants";
+import { randomGreeting } from "#shared/shared.js";
+import { NAME } from "./constants.js";
 
 window.sayHello = function() {
     document.querySelector("p")
