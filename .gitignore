@@ -3,7 +3,7 @@ node_modules/
 test-extension/dist/
 
 .DS_Store
-package-lock.json
+
 *.tsbuildinfo
 *.js.map
 

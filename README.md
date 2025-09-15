@@ -4,6 +4,12 @@
 
 **Labs** is a framework that facilitates web extension development: Build with a bundler made for extensions, in a local preview environment. It supports Typescript and SCSS out-of-the-box, and also [Vue](https://vuejs.org/guide/scaling-up/sfc.html)-inspired single file components. Imagine [Vite](https://vite.dev), but for extensions.
 
+<p align="left">
+  <a href="https://www.webfuse.com"><img src="https://img.shields.io/badge/Webfuse-4D94FF"></a>
+  <a href="https://www.webfuse.com/labs"><img src="https://img.shields.io/github/package-json/v/surfly/Labs?color=C65AA0"></a>
+  <a href="https://github.com/surfly/Labs/actions/workflows/test.yml"><img src="https://img.shields.io/github/actions/workflow/status/surfly/Labs/test.yml?label=test&logo=github"></a>
+</p>
+
 <p align="center">
   <a href="#webfuse-labs" target="_blank"><img src="./.github/figure-1.png" alt="Labs' features: Bundler, SFCs, and Preview""></a>
 </p>
