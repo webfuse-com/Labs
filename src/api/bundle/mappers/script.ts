@@ -93,10 +93,9 @@ export const transpilerScripts = new Transpiler(async (code: string, _, loader: 
 							const normalizedImportPath: string = normalize(join(args.resolveDir, args.path));
 
 							const isSharedPath = (path: string) => {
-								const sharedDirPath = join(SRC_PATH, "shared");
-								return path.slice(0, sharedDirPath.length) === sharedDirPath;
+								const rootPath = normalize(join(SRC_PATH, "shared"));
+								return path.slice(0, rootPath.length) === rootPath;
 							};
-
 							if(isSharedPath(normalizedImportPath))
 								return {
 									path: normalizedImportPath
@@ -120,10 +119,7 @@ export const transpilerScripts = new Transpiler(async (code: string, _, loader: 
 								};
 							}
 
-							if(normalizedImportPath.slice(0, args.resolveDir.length) !== args.resolveDir)
-								throw new SyntaxError(
-									`Absolute and relative imports from outer directories not allowed: ${args.resolveDir}: "${args.path}"`
-								);
+							// TODO: Constrain cross-target dir imports
 
 							return null;
 						});
