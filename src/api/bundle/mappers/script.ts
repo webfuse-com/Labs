@@ -80,6 +80,11 @@ export const transpilerScripts = new Transpiler(async (code: string, _, loader: 
 				contents: code,
 				resolveDir: resolveDir
 			},
+			loader: {
+				".css": "text",
+				".html": "text",
+				".md": "text"
+			},
 			bundle: true,
 			write: false,
 			platform: "browser",

@@ -36,6 +36,8 @@
         }
     };
 
+    window.__MOCK.webfuseSession.env = {};
+
 
     const handleGet = (scope, prop) => {
         if(window.__MOCK[scope][prop])

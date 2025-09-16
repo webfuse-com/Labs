@@ -1,4 +1,6 @@
-browser.webfuseSession.log("Example...");
+import TEXT from "./text.md";
+
+browser.webfuseSession.log(TEXT);
 
 browser.runtime.onMessage.addListener((message, sender) => {
     console.log(`Received message from ${sender.url} in content:`, {

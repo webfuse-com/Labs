@@ -21,9 +21,8 @@ strong {
 `, CONTENT_JS, "Invalid content.js");
 
 assertIn(`
-(() => {
   // <stdin>
-  browser.webfuseSession.log("Example...");
+  browser.webfuseSession.log(text_default);
   browser.runtime.onMessage.addListener((message, sender) => {
     console.log(\`Received message from \${sender.url} in content:\`, {
       message,
