@@ -20,7 +20,7 @@
             sender: window .__SENDER
         }, "*");
     };
-    window.__MOCK.tabs.sendMessage = function(data) {
+    window.__MOCK.tabs.sendMessage = function(_, data) {
         window.parent.postMessage({
             data,
             sender: window .__SENDER,
@@ -31,7 +31,11 @@
     window.__MOCK.runtime.onMessage = {
         addListener(cb) {
             window.addEventListener("message", e => {
-                cb(e.data.data, e.data.sender);
+                cb(e.data.data, e.data.sender, data => {
+                    // TODO: Only send response back to sender
+                    window.__MOCK.runtime.sendMessage(data);
+                    window.__MOCK.tabs.sendMessage(0, data);
+                });
             });
         }
     };
