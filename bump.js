@@ -27,7 +27,7 @@ setImmediate(() => {
             writeFileSync(join(import.meta.dirname, "package.json"), JSON.stringify(packageJson, null, 2));
 
             console.log(`New version: \x1b[32m${packageJson.version}\x1b[0m`);
-            console.log(`\x1b[31m\x1b[2mCreate GitHub Release:\x1b[22m https://github.com/surfly/labs/releases/new?tag=${packageJson.version}&title=${packageJson.version}`);
+            console.log(`\x1b[31m\x1b[2mCreate GitHub Release:\x1b[22m https://github.com/webfuse-com/labs/releases/new?tag=${packageJson.version}&title=${packageJson.version}`);
 
             process.exit(0);
         });

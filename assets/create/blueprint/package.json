@@ -6,6 +6,6 @@
     "preview": "npx labs preview"
   },
   "devDependencies": {
-    "@surfly/labs": "github:surfly/labs"
+    "@webfuse-com/labs": "github:webfuse-com/labs"
   }
 }

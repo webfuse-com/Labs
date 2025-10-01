@@ -15,5 +15,5 @@ Usage: labs <command> [--<arg> [<option>]?]*
   --working-dir  Specify working, i.e. extension directory [./]
 
 More information:
-https://github.com/surfly/labs#webfuse-labs
-https://docs.surfly.com/webfuse/extensions/introduction
+https://github.com/webfuse-com/labs#webfuse-labs
+https://docs.webfuse-com.com/webfuse/extensions/introduction

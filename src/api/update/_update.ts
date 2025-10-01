@@ -14,7 +14,7 @@ import { TUpdateInfo, updateAvailable } from "./check-update.js";
  * Install update via NPM CLI.
  */
 function installUpdate(globally = false) {
-	return spawnSync("npm", [ "install", globally ? "-g" : "", "surfly/labs" ], {
+	return spawnSync("npm", [ "install", globally ? "-g" : "", "webfuse-com/labs" ], {
 		cwd: process.cwd(),
 		stdio: "inherit"
 	});

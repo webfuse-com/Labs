@@ -6,8 +6,8 @@
 
 <p align="left">
   <a href="https://www.webfuse.com"><img src="https://img.shields.io/badge/Webfuse-4D94FF"></a>
-  <a href="https://www.webfuse.com/labs"><img src="https://img.shields.io/github/package-json/v/surfly/Labs?color=C65AA0"></a>
-  <a href="https://github.com/surfly/Labs/actions/workflows/test.yml"><img src="https://img.shields.io/github/actions/workflow/status/surfly/Labs/test.yml?label=test&logo=github"></a>
+  <a href="https://www.webfuse.com/labs"><img src="https://img.shields.io/github/package-json/v/webfuse-com/Labs?color=C65AA0"></a>
+  <a href="https://github.com/webfuse-com/Labs/actions/workflows/test.yml"><img src="https://img.shields.io/github/actions/workflow/status/webfuse-com/Labs/test.yml?label=test&logo=github"></a>
 </p>
 
 <p align="center">
@@ -38,15 +38,15 @@
 Run the below command to install Labs. It becomes available in your command line interface (CLI) as `labs`.
 
 ``` console
-npm i -g surfly/labs
+npm i -g webfuse-com/labs
 ```
 
-> You might need to execute the above command with admin priviliges. Try `sudo npm i -g surfly/labs` – at your own risk. Otherwise, create a wrapper directory, and install Labs on project level:
+> You might need to execute the above command with admin priviliges. Try `sudo npm i -g webfuse-com/labs` – at your own risk. Otherwise, create a wrapper directory, and install Labs on project level:
 > ``` console
 > mkdir with-labs
 > cd with-labs
 > npm init -y
-> npm i surfly/labs
+> npm i webfuse-com/labs
 > ```
 > Prefix all subsequent `labs` commands with `npx`, e.g. `npx labs create`.
 
@@ -309,7 +309,7 @@ browser.runtime
 
 ### Webfuse
 
-Follow the [Official Documentation](https://docs.surfly.com/webfuse/extensions/introduction#extension-directory-upload-handling-and-limitations) to install your extension to a Webfuse session. This holds for both use in production, as well as verification with full browser/session capabilities. In a nutshell, this comprises three steps:
+Follow the [Official Documentation](https://dev.webfuse.com/guides/virtual-web-extensions/#how-to-install-an-extension) to install your extension to a Webfuse session. This holds for both use in production, as well as verification with full browser/session capabilities. In a nutshell, this comprises three steps:
 
 1. Open your Webfuse session,
 2. navigate to the Extensions tab, and
@@ -368,7 +368,7 @@ Print the currently installed version of Labs.
 
 **Setup:**
 
-1. `npm i -g surfly/labs`
+1. `npm i -g webfuse-com/labs`
 2. `labs create`
 3. `cd my-extension`
 
@@ -403,9 +403,9 @@ console.log(browser.webfuseSession.env.FOO);  // "bar"
 
 ## Further Reading
 
-- [Planned Features](https://github.com/surfly/labs/issues)
-- [Webfuse - The web augmentation platform](https://www.webfuse.com)
-- [Webfuse Extensions](https://docs.surfly.com/webfuse/extensions/api_reference)
+- [Planned Features](https://github.com/webfuse-com/labs/issues)
+- [Webfuse](https://www.webfuse.com)
+- [Webfuse Extensions](https://dev.webfuse.com/extension-api)
 - [Browser Extensions](https://developer.chrome.com/docs/extensions/get-started)
 - [Introducing: Web Augmentation](https://www.webfuse.com/blog/web-augmentation)
 

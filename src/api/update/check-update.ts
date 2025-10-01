@@ -19,7 +19,7 @@ export type TUpdateInfo = {
 };
 
 
-const RAW_PACKAGE_URL = "https://raw.githubusercontent.com/surfly/labs/refs/heads/main/package.json";
+const RAW_PACKAGE_URL = "https://raw.githubusercontent.com/webfuse-com/labs/refs/heads/main/package.json";
 const TEMP_FILE = join(tmpdir(), "labs.tmp");
 const CHECK_INTERVAL = 1000 * 60 * 30;  // 30 min
 
