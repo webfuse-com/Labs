@@ -31,7 +31,6 @@
 
 - [Node.js + NPM](https://nodejs.org) v22+/v10+
 - [Webfuse](https://webfuse.com/studio/auth/signup) Account (optional, recommended)
-  > [**Webfuse**](https://webfuse.com) is a web augmentation platform to instantly extend, automate & share any web session. Webfuse extensions are browser extensions, but enhanced with a powerful augmentation API.
 
 ## Installation
 
@@ -59,7 +58,7 @@ cd my-extension
 
 ## Preview
 
-Extensions can be uploaded to Webfuse through a neat session user interface (UI) dialogue. In a prototyping or incremental development process, however, this is unfortunate. Natural browser and file system boundaries force it to become a redundant task. With Labs, you can instead preview the latest state of your bundle right on your local machine. The following command spins up the preview environment:
+Extensions can be uploaded to Webfuse through a neat Session UI dialogue. In a prototyping or incremental development process, however, this is unfortunate. Natural browser and file system boundaries force it to become a redundant task. With Labs, you can instead preview the latest state of your bundle right on your local machine. The following command spins up the preview environment:
 
 ``` console
 labs preview
@@ -229,7 +228,7 @@ A valid SFC file assembles from at most one of the following tags (top-level): `
 
 ## Content Augmentation
 
-The background and content script can optionally be grouped within directories, too. In case of a grouped content script, files to augmentat any individual content page can be placed in the `augmentation` subdirectory:
+The background and content script can optionally be grouped within directories, too. In case of a grouped content script, files to augmenta any individual content page can be placed in the `augmentation` subdirectory:
 
 ```
 .
@@ -281,7 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 ## Browser & Webfuse APIs
 
-The Labs preview environment primarily enables incremental development of the extension UI. Extensions do, certainly, subsist on [Browser APIs](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API), and the [Webfuse API](https://dev.webfuse.com/reference/extension-api/). API-based functionality, on the other hand, is strongly tied to a browser and session environment.
+The Labs preview environment primarily enables incremental development of the extension UI. Extensions do, certainly, subsist on [Browser APIs](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API), and the [Webfuse API](https://dev.webfuse.com/reference/extension-api/). API-based functionality, on the other hand, is strongly tied to a browser and Session environment.
 
 A Labs preview only mocks what is relevant to an extension's components. Complementary API properties are considered 'dry': They exist for completeness, but a call does nothing but return an empty promise, and log a debug message. 
 
@@ -309,9 +308,9 @@ browser.runtime
 
 ### Webfuse
 
-Follow the [Official Documentation](https://dev.webfuse.com/guides/virtual-web-extensions/#how-to-install-an-extension) to install your extension to a Webfuse session. This holds for both use in production, as well as verification with full browser/session capabilities. In a nutshell, this comprises three steps:
+Follow the [Official Documentation](https://dev.webfuse.com/extension-guide) to install your extension to a Webfuse Session. This holds for both use in production, as well as verification with full browser/session capabilities. In a nutshell, this comprises three steps:
 
-1. Open your Webfuse session,
+1. Open your Webfuse Session,
 2. navigate to the Extensions tab, and
 3. use the upload option.
 
@@ -380,7 +379,7 @@ Print the currently installed version of Labs.
 **Upload:**
 
 1. `labs bundle`
-2. Upload `/dist` to Webfuse session.
+2. Upload `/dist` to Webfuse Session.
 
 ## with Webfuse
 
