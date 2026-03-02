@@ -5,8 +5,7 @@ import { bundlerCSS } from "../../tmp/api/bundlers/bundler.css.js";
 
 function normalizeCSS(css) {
     return css
-        .replace(/\s+/g, " ")
-        .replace(/ *([{}:;]) */g, "$1")
+        .replace(/\s+/g, "")
         .trim();
 }
 
