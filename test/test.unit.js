@@ -1,30 +1,8 @@
-import { readFileSync } from "fs";
-import { join } from "path";
-import { deepEqual, equal } from "assert";
+import { deepEqual, equal, ok } from "assert";
 
 import { catchError, runSuite } from "./suite.js";
+import { existsSync } from "fs";
 
-
-/**
- * Get file path from the test extension's dist directory (by relative path).
- */
-global._path = name => {
-    return join(import.meta.dirname, "../test-extension/dist/", name);
-};
-
-/**
- * Read a from the test extension's dist directory (by relative path).
- */
-global._readDist = name => {
-    return readFileSync(global._path(name)).toString();
-};
-
-/**
- * Assertion functions:
- * - assertEquals()
- * - assertIn()     ... string in string?
- * - assertNotIn()  ... string not in string?
- */
 
 global.assertEquals = (actual, expected, message) => {
     catchError(() => {
@@ -47,6 +25,18 @@ global.assertIn = (actualPartial, expected, message, preserveWhitespace) => {
 
 global.assertNotIn = (actualPartial, expected, message, preserveWhitespace) => {
     assertIn(actualPartial, expected, message, preserveWhitespace, false);
+};
+
+global.assertExists = (path, message) => {
+    catchError(() => {
+        ok(existsSync(path));
+    }, message);
+};
+
+global.assertNotExists = (path, message) => {
+    catchError(() => {
+        ok(!existsSync(path));
+    }, message);
 };
 
 

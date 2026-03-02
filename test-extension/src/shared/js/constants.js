@@ -1,1 +1,0 @@
-export const GREETINGS = [ "Hello", "Hi", "Hoi" ];

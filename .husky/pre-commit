@@ -1,7 +1,7 @@
 npx lint-staged
 
-npm run compile
-npm run prepare:test
+npm run build
+npm run test
 npm test
 
-git add ./lib
+git add ./dist

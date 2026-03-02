@@ -1,4 +1,3 @@
-import { dir } from "console";
 import { readdir } from "fs/promises";
 import { join } from "path";
 
@@ -51,10 +50,12 @@ export async function catchError(assertion, errorMessage) {
         console.error([
             `\x1b[1m\x1b[31mFailed Assertion\x1b[0m ${errorMessage ?? ""}`,
             `\x1b[2mat \x1b[22m${trace}\x1b[2m:\x1b[0m`,
-            `\x1b[2mExpected: \x1b[36m${err.expected.toString()}\x1b[0m`,
+            err.expected ? `\x1b[2mExpected: \x1b[36m${err.expected.toString()}\x1b[0m` : null,
             `\x1b[2mActual:\x1b[0m   \x1b[1m\x1b[36m${err.actual.toString()}\x1b[0m`,
             ""
-        ].join("\n"));
+        ]
+            .filter(line => !!line)
+            .join("\n"));
 
         process.exit(1);
     }
