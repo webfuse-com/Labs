@@ -2,6 +2,3 @@ npx lint-staged
 
 npm run build
 npm run test
-npm test
-
-git add ./dist

@@ -1,6 +1,8 @@
 import { join } from "path";
+import { readFileSync } from "fs";
 
-import { ExtensionBuilder } from "../../src/api/ExtensionBuilder.ts";
+import { ExtensionBuilder } from "../../tmp/api/ExtensionBuilder.js";
+import { AssetBundler } from "../../tmp/api/AssetBundler.js";
 
 
 const distPath = join(import.meta.dirname, "files", "dist");
@@ -9,14 +11,14 @@ const extensionBuilder = new ExtensionBuilder(
     join(import.meta.dirname, "files", "src"),
     distPath,
     {
-        name: "foo"
+        name: "foo",
     },
     {
         name: "bar",
         artifactsConfig: {
-            html: true,
-            js: true,
-            css: true
+            js: { enabled: true, AssetBundler: new AssetBundler(rawData => rawData + "...") },
+            html: { enabled: true },
+            css: { enabled: true }
         }
     },
 );
@@ -46,6 +48,18 @@ assertExists(
 assertExists(
     join(distPath, "bar.css"),
     "Did not emit extension component file 'bar.css'"
+);
+
+assertEquals(
+    readFileSync(join(distPath, "foo.js")).toString(),
+    "",
+    "Invalid emitted file contents for 'foo.js'"
+);
+
+assertEquals(
+    readFileSync(join(distPath, "bar.js")).toString(),
+    "...",
+    "Invalid emitted file contents for 'bar.js'"
 );
 
 assertEquals(

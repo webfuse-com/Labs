@@ -2,6 +2,8 @@ import { dirname, join, resolve } from "path";
 import { Stats } from "fs";
 import { stat, mkdir, writeFile, readFile } from "fs/promises";
 
+import { AssetBundler } from "./AssetBundler.js";
+
 
 type NoData = null;
 
@@ -11,14 +13,22 @@ interface ExtensionComponentFileMap<T> extends Record<string, T | undefined> {
     css?: T;
 };
 
+type ExtensionComponentConfig = ExtensionComponentFileMap<{
+	enabled: boolean;
+
+	AssetBundler?: AssetBundler;
+}>;
+
 
 export class ExtensionFileReader {
 	private readonly absoluteSrcFilePath: string;
+	private readonly AssetBundler: AssetBundler;
 
 	private lastModificationTimeMs: number;
 
-	constructor(absoluteSrcFilePath: string) {
+	constructor(absoluteSrcFilePath: string, AssetBundler?: AssetBundler) {
 		this.absoluteSrcFilePath = absoluteSrcFilePath;
+		this.AssetBundler = AssetBundler;
 
 		this.lastModificationTimeMs = -Infinity;
 	}
@@ -43,11 +53,14 @@ export class ExtensionFileReader {
 
 		if(!hasChanged) return null;
 
-		const data: string = (await readFile(this.absoluteSrcFilePath)).toString();
+		const rawData: string = (await readFile(this.absoluteSrcFilePath)).toString();
+		const assetBuiltData: string = this.AssetBundler
+			? await this.AssetBundler.build(rawData)
+			: rawData;
 
 		this.lastModificationTimeMs = lastModificationTimeMs;
 
-		return data;
+		return assetBuiltData;
 	}
 }
 
@@ -68,7 +81,7 @@ export class ExtensionFileEmitter {
 }
 
 export class ExtensionComponent {
-	public readonly artifactsConfig: ExtensionComponentFileMap<boolean>;
+	public readonly artifactsConfig: ExtensionComponentConfig;
 	public readonly readers: ExtensionComponentFileMap<ExtensionFileReader>;
 	public readonly emitters: ExtensionComponentFileMap<ExtensionFileEmitter>;
 
@@ -76,18 +89,24 @@ export class ExtensionComponent {
 		name: string,
 		absoluteSrcDirectoryPath: string,
 		absoluteDistDirectoryPath: string,
-		artifactsConfig: ExtensionComponentFileMap<boolean> = {}
+		artifactsConfig: ExtensionComponentConfig = {}
 	) {
 		this.artifactsConfig = artifactsConfig;
 		this.readers = {};
 		this.emitters = {};
+
 		for(const artifactExtension in this.artifactsConfig) {
-			if(!this.artifactsConfig[artifactExtension]) continue;
+			if(!this.artifactsConfig[artifactExtension].enabled) continue;
 
 			const fileName: string = `${name}.${artifactExtension}`;
 
-			this.readers[artifactExtension] = new ExtensionFileReader(join(absoluteSrcDirectoryPath, name, fileName));
-			this.emitters[artifactExtension] = new ExtensionFileEmitter(join(absoluteDistDirectoryPath, fileName));
+			this.readers[artifactExtension] = new ExtensionFileReader(
+				join(absoluteSrcDirectoryPath, name, fileName),
+				this.artifactsConfig[artifactExtension].AssetBundler
+			);
+			this.emitters[artifactExtension] = new ExtensionFileEmitter(
+				join(absoluteDistDirectoryPath, fileName)
+			);
 		}
 	}
 
@@ -95,7 +114,7 @@ export class ExtensionComponent {
 		const emittedFilesPaths: string[] = [];
 
 		for(const artifactExtension in this.artifactsConfig) {
-			if(!this.artifactsConfig[artifactExtension]) continue;
+			if(!this.artifactsConfig[artifactExtension].enabled) continue;
 
 			const data: string | NoData = await this.readers[artifactExtension].read();
 
@@ -115,17 +134,17 @@ export class ExtensionBuilder {
 
 	constructor(srcDirectoryPath: string, distDirectoryPath: string, ...components: {
         name: string;
-        artifactsConfig?: Partial<ExtensionComponentFileMap<boolean>>;
+        artifactsConfig?: Partial<ExtensionComponentConfig>;
     }[]) {
 		const absoluteSrcDirectoryPath: string = resolve(srcDirectoryPath);
 		const absoluteDistDirectoryPath: string = resolve(distDirectoryPath);
 
 		components
             .forEach(component => {
-            	const artifactsConfigWithDefaults: ExtensionComponentFileMap<boolean> = {
-            		js: true,
-            		html: false,
-            		css: false,
+            	const artifactsConfigWithDefaults: ExtensionComponentConfig = {
+            		js: { enabled: true },
+            		html: { enabled: false },
+            		css: { enabled: false },
 
             		...(component.artifactsConfig ?? {})
             	};

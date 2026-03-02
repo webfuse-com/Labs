@@ -1,8 +1,9 @@
 import { join } from "path";
 
-import { ExtensionBuilder } from "./ExtensionBuilder";
+import { ExtensionBuilder } from "./ExtensionBuilder.js";
 
 import config from "../../config.json" with { type: "json" };
+
 
 
 export function createExtensionBuilder(rootPath: string, artifactDirectoryNames: {
@@ -18,17 +19,17 @@ export function createExtensionBuilder(rootPath: string, artifactDirectoryNames:
 		{
 			name: "popup",
 			artifactsConfig: {
-				html: true,
-				js: true,
-				css: true
+				js: { enabled: true },
+				html: { enabled: true },
+				css: { enabled: true }
 			}
 		},
 		{
 			name: "newtab",
 			artifactsConfig: {
-				html: true,
-				js: true,
-				css: true
+				js: { enabled: true },
+				html: { enabled: true },
+				css: { enabled: true }
 			}
 		}
 	);

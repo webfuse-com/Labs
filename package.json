@@ -5,19 +5,25 @@
   "type": "module",
   "main": "./dist/api.js",
   "scripts": {
-    "build": "npx esbuild ./src/api/api.ts --bundle --outfile=./dist/api.js --platform=node --packages=external --format=esm --target=es2022",
+    "build": "npx esbuild ./src/**/*.ts --outdir=./tmp --bundle --platform=node --packages=external --format=esm --target=es2022",
     "build:watch": "npm run build -- --watch",
     "lint": "npx eslint ./src/*",
     "lint:fix": "npm run lint -- --fix",
-    "test:unit": "node --experimental-strip-types ./test/test.unit.js",
-    "test": "npm run test:unit"
+    "test:unit": "node ./test/test.unit.js",
+    "test": "npm run test:unit",
+    "clean": "rm -rf ./tmp && rm -rf ./dist",
+    "cycle": "cp -r ./tmp ./dist",
+    "bump-version": "node ./scripts/bump-version.js",
+    "release": "npm run clean && npm run build && npm run cycle && npm run bump-version"
+  },
+  "dependencies": {
+    "esbuild": "^0.27.3"
   },
   "devDependencies": {
     "@types/node": "^25.3.3",
     "@typescript-eslint/eslint-plugin": "^8.30.1",
     "@typescript-eslint/parser": "^8.30.1",
     "concurrently": "^9.2.1",
-    "esbuild": "^0.27.3",
     "eslint": "^9.24.0",
     "eslint-plugin-typescript": "^0.14.0",
     "husky": "^9.1.7",

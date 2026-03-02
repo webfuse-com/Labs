@@ -1,10 +1,5 @@
 node_modules/
-
-test-extension/dist/
+tmp/
 
 .DS_Store
-
-*.tsbuildinfo
-*.js.map
-
 .tmp
