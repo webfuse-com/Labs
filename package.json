@@ -5,7 +5,7 @@
   "type": "module",
   "main": "./dist/api.js",
   "scripts": {
-    "build": "npx esbuild ./src/**/*.ts --outdir=./tmp --bundle --platform=node --packages=external --format=esm --target=es2022",
+    "build": "npx esbuild './src/**/*.ts' --outdir=./tmp --bundle --platform=node --packages=external --format=esm --target=es2022",
     "build:watch": "npm run build -- --watch",
     "lint": "npx eslint ./src/*",
     "lint:fix": "npm run lint -- --fix",

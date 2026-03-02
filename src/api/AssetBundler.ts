@@ -1,4 +1,4 @@
-type BuildCallback = (rawData: string) => Promise<string>;
+type BuildCallback = (rawData: string, absoluteDirectoryPath?: string) => Promise<string>;
 
 
 export class AssetBundler {
@@ -8,7 +8,7 @@ export class AssetBundler {
 		this.buildCb = buildCb;
 	}
 
-	public build(rawData: string): Promise<string> {
-		return this.buildCb(rawData);
+	public bundle(rawData: string, absoluteDirectoryPath?: string): Promise<string> {
+		return this.buildCb(rawData, absoluteDirectoryPath);
 	}
 }

@@ -55,7 +55,7 @@ export class ExtensionFileReader {
 
 		const rawData: string = (await readFile(this.absoluteSrcFilePath)).toString();
 		const assetBuiltData: string = this.AssetBundler
-			? await this.AssetBundler.build(rawData)
+			? await this.AssetBundler.bundle(rawData, dirname(this.absoluteSrcFilePath))
 			: rawData;
 
 		this.lastModificationTimeMs = lastModificationTimeMs;
