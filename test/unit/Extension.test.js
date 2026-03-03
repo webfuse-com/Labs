@@ -81,7 +81,7 @@ assertEquals(
         "./bar/bar.js",
         "./bar/bar.html",
         "./bar/bar.css",
-        "./manifest.json"
+        "./manifest.json",
     ]
         .map(fileName => join(distPath, fileName)),
     "Invalid build artifacts paths"

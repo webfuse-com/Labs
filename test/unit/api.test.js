@@ -32,6 +32,16 @@ assertExists(
 );
 
 assertExists(
+    join(distPath, "icon"),
+    "Did not emit icons directory"
+);
+
+assertExists(
+    join(distPath, "./icon/32.png"),
+    "Did not emit icon (32px)"
+);
+
+assertExists(
     join(distPath, "./background/background.js"),
     "Did not transpile TypeScript background script"
 );

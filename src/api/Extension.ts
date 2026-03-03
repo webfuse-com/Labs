@@ -1,12 +1,21 @@
+import { stat, mkdir, writeFile } from "fs/promises";
+
+import sharp from "sharp";
+
 import { resolve, dirname, join } from "path";
 import { ExtensionComponent, ExtensionComponentType, ExtensionComponentConfig } from "./ExtensionComponent.js";
 import { Manifest } from "./Manifest.js";
-import { writeFile } from "fs/promises";
+
+
+const ICON_SRC_FILE_PATH: string = "./icon.svg";
+const ICON_DIST_DIRECTORY_PATH: string = "./icon";
+const DIST_PNG_ICON_SIZES_PX: number[] = [ 16, 32, 64, 128 ];
 
 
 export class Extension {
 	private readonly manifest: Manifest;
 	private readonly components: ExtensionComponent[] = [];
+	private readonly absoluteSrcDirectoryPath: string;
 	private readonly absoluteDistDirectoryPath: string;
 
 	constructor(srcDirectoryPath: string, distDirectoryPath: string, ...components: {
@@ -14,11 +23,10 @@ export class Extension {
         name: string;
         artifactsConfig?: Partial<ExtensionComponentConfig>;
     }[]) {
-		const absoluteSrcDirectoryPath: string = resolve(srcDirectoryPath);
-		const absoluteDistDirectoryPath: string = resolve(distDirectoryPath);
+		this.absoluteSrcDirectoryPath = resolve(srcDirectoryPath);
+		this.absoluteDistDirectoryPath = resolve(distDirectoryPath);
 
-		this.absoluteDistDirectoryPath = absoluteDistDirectoryPath;
-		this.manifest = new Manifest(dirname(absoluteSrcDirectoryPath));
+		this.manifest = new Manifest(dirname(this.absoluteSrcDirectoryPath));
 
 		components
             .forEach(component => {
@@ -34,8 +42,8 @@ export class Extension {
             		new ExtensionComponent(
             			component.type,
             			component.name,
-            			absoluteSrcDirectoryPath,
-            			absoluteDistDirectoryPath,
+            			this.absoluteSrcDirectoryPath,
+            			this.absoluteDistDirectoryPath,
             			artifactsConfigWithDefaults
             		)
             	);
@@ -74,6 +82,33 @@ export class Extension {
 		const emitManifestFilePath: string = join(this.absoluteDistDirectoryPath, `manifest.json`);
 		await writeFile(emitManifestFilePath, await this.manifest.toString());
 		emittedFilesPaths.push(emitManifestFilePath);
+
+		try {
+			const iconSrcFilePath: string = join(this.absoluteSrcDirectoryPath, ICON_SRC_FILE_PATH);
+
+			await stat(iconSrcFilePath);
+
+			const absoluteIconDistDirectoryPath: string = join(this.absoluteDistDirectoryPath, ICON_DIST_DIRECTORY_PATH);
+
+			await mkdir(absoluteIconDistDirectoryPath, { recursive: true });
+
+			const emitIconFilePaths: string[] = await Promise.all(
+				DIST_PNG_ICON_SIZES_PX
+					.map(async (iconSizePx: number) => {
+						const absoluteIconFilePath: string = join(this.absoluteDistDirectoryPath, ICON_DIST_DIRECTORY_PATH, `${iconSizePx}.png`);
+
+						await sharp(iconSrcFilePath)
+							.resize({ height: iconSizePx })
+							.png()
+							.toFile(absoluteIconFilePath);
+
+						return absoluteIconFilePath;
+					})
+			);
+			emittedFilesPaths.push(...emitIconFilePaths)
+		} catch (err) {
+			if((err as NodeJS.ErrnoException)?.code !== "ENOENT") throw err;
+		}
 
 		return emittedFilesPaths.flat();
 	}
