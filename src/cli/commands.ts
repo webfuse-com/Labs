@@ -8,7 +8,7 @@ import { create } from "./create/create.js";
 import { prototype } from "./prototype/prototype.js";
 import { PackageVersions, isUpdateAvailable, retrievePackageVersions } from "./update/versions.js";
 
-import { type ExtensionBuilder, createExtensionBuilder } from "../api/api.js";
+import { type Extension, createExtension } from "../api/api.js";
 
 
 const HELP_TEXT_FILE_PATH = join(import.meta.dirname, "../../cli.help.txt");
@@ -20,18 +20,24 @@ export const commandRegistry: CommandRegistry = new CommandRegistry();
 commandRegistry.register("help", () => {
 	console.log(
 		readFileSync(HELP_TEXT_FILE_PATH).toString()
-            .replace(/(Webfuse|Labs)/g, "\x1b[1m$1\x1b[0m")
-            .replace(/(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*))/g, "\x1b[38;2;222;74;183m$1\x1b[0m")
+            .replace(
+            	/(Webfuse|Labs)/g,
+            	"\x1b[1m$1\x1b[0m"
+            )
+            .replace(
+            	/(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*))/g,
+            	"\x1b[38;2;222;74;183m$1\x1b[0m"
+            )
 	);
 });
 
 const bundle = async (watch: boolean = false): Promise<string> => {
 	const absoluteWorkingDirectoryPath: string = resolve(parseOption("working-dir") ?? ".");
 
-	const extensionBuilder: ExtensionBuilder = createExtensionBuilder(absoluteWorkingDirectoryPath);
+	const extensionBuilder: Extension = createExtension(absoluteWorkingDirectoryPath);
 
 	if(!watch) {
-		const emittedPaths: string[] = await extensionBuilder.build();
+		const emittedPaths: string[] = await extensionBuilder.bundle();
 
 		print(
 			[

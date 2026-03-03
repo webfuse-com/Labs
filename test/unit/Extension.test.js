@@ -1,7 +1,7 @@
 import { join } from "path";
 import { rmSync, readFileSync } from "fs";
 
-import { ExtensionBuilder } from "../../tmp/api/ExtensionBuilder.js";
+import { Extension } from "../../tmp/api/Extension.js";
 import { AssetBundler } from "../../tmp/api/AssetBundler.js";
 
 
@@ -12,13 +12,15 @@ const distPath = join(dirPath, "dist");
 rmSync(dirPath, { recursive: true, force: true });
 
 
-const extensionBuilder = new ExtensionBuilder(
+const extension = new Extension(
     srcPath,
     distPath,
     {
+        type: "background",
         name: "foo",
     },
     {
+        type: "popup",
         name: "bar",
         artifactsConfig: {
             js: { enabled: true, assetBundler: new AssetBundler(rawData => rawData + "...") },
@@ -28,7 +30,7 @@ const extensionBuilder = new ExtensionBuilder(
     },
 );
 
-const buildResult = await extensionBuilder.build();
+const buildResult = await extension.bundle();
 
 assertNotExists(
     join(distPath, "foo.js"),
@@ -78,7 +80,8 @@ assertEquals(
         "./foo/foo.js",
         "./bar/bar.js",
         "./bar/bar.html",
-        "./bar/bar.css"
+        "./bar/bar.css",
+        "./manifest.json"
     ]
         .map(fileName => join(distPath, fileName)),
     "Invalid build artifacts paths"

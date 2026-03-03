@@ -13,17 +13,22 @@ rmSync(distPath, { recursive: true, force: true });
 assertEquals(
     Object.keys(api),
     [
-        "ExtensionBuilder",
-        "createExtensionBuilder"
+        "Extension",
+        "createExtension"
     ],
     "Invalid API signature"
 );
 
-await api.createExtensionBuilder(dirPath).build();
+await api.createExtension(dirPath).bundle();
 
 assertExists(
-    dirPath,
+    distPath,
     "Did not emit extension distributable"
+);
+
+assertExists(
+    join(distPath, "manifest.json"),
+    "Did not emit extension manifest"
 );
 
 assertExists(
@@ -64,6 +69,12 @@ assertIn(
     "console.log(\"baz\");",
     readFileSync(join(distPath, "./popup/popup.js")).toString(),
     "Invalid emitted file contents for 'popup.js'"
+);
+
+assertIn(
+    [ "<html>", "<body>", "quux" ],
+    readFileSync(join(distPath, "/popup/popup.html")).toString(),
+    "Invalid emitted file contents for 'popup.html'"
 );
 
 assertIn(

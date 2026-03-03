@@ -1,15 +1,23 @@
 import { join } from "path";
 
-import { ManifestGenerator } from "../../tmp/api/ManifestGenerator.js";
+import { Manifest } from "../../tmp/api/Manifest.js";
 
 
 const extensionPath = join(import.meta.dirname, "./files/extension");
 
-const manifestGenerator = new ManifestGenerator(extensionPath);
+const manifestGenerator = new Manifest(extensionPath);
 
 const expectedDefaultObject = {
     manifest_version: 3,
+    host_permissions:[ "<all_urls>" ],
     content_scripts: [],
+    icons: {
+        "16": "icon/16.png",
+        "32": "icon/32.png",
+        "64": "icon/64.png",
+        "128": "icon/128.png"
+    },
+    // updated part:
     name: "@webfuse-com/example",
     version: "0.8.15"
 };

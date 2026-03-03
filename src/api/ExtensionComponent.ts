@@ -1,4 +1,4 @@
-import { dirname, join, resolve } from "path";
+import { dirname, join } from "path";
 import { Stats } from "fs";
 import { stat, mkdir, writeFile, readFile } from "fs/promises";
 
@@ -12,13 +12,20 @@ const EXTENSION_ALIASES: Record<string, string[]> = {
 
 type NoData = null;
 
+
+export type ExtensionComponentType =
+	| "background"
+	| "content"
+	| "popup"
+	| "newtab";
+
 interface ExtensionComponentFileMap<T> extends Record<string, T | undefined> {
     js?: T;
     html?: T;
     css?: T;
 };
 
-type ExtensionComponentConfig = ExtensionComponentFileMap<{
+export type ExtensionComponentConfig = ExtensionComponentFileMap<{
 	enabled: boolean;
 
 	assetBundler?: AssetBundler;
@@ -95,16 +102,20 @@ export class ExtensionFileEmitter {
 }
 
 export class ExtensionComponent {
-	public readonly artifactsConfig: ExtensionComponentConfig;
-	public readonly readers: ExtensionComponentFileMap<ExtensionFileReader>;
-	public readonly emitters: ExtensionComponentFileMap<ExtensionFileEmitter>;
+	private readonly artifactsConfig: ExtensionComponentConfig;
+	private readonly readers: ExtensionComponentFileMap<ExtensionFileReader>;
+	private readonly emitters: ExtensionComponentFileMap<ExtensionFileEmitter>;
+
+	public readonly type: ExtensionComponentType;
 
 	constructor(
+		type: ExtensionComponentType,
 		name: string,
 		absoluteSrcDirectoryPath: string,
 		absoluteDistDirectoryPath: string,
 		artifactsConfig: ExtensionComponentConfig = {}
 	) {
+		this.type = type;
 		this.artifactsConfig = artifactsConfig;
 		this.readers = {};
 		this.emitters = {};
@@ -146,50 +157,5 @@ export class ExtensionComponent {
 		}
 
 		return emittedFilesPaths;
-	}
-}
-
-export class ExtensionBuilder {
-	private readonly components: ExtensionComponent[] = [];
-
-	constructor(srcDirectoryPath: string, distDirectoryPath: string, ...components: {
-        name: string;
-        artifactsConfig?: Partial<ExtensionComponentConfig>;
-    }[]) {
-		const absoluteSrcDirectoryPath: string = resolve(srcDirectoryPath);
-		const absoluteDistDirectoryPath: string = resolve(distDirectoryPath);
-
-		components
-            .forEach(component => {
-            	const artifactsConfigWithDefaults: ExtensionComponentConfig = {
-            		js: { enabled: true },
-            		html: { enabled: false },
-            		css: { enabled: false },
-
-            		...(component.artifactsConfig ?? {})
-            	};
-
-            	this.components.push(
-            		new ExtensionComponent(
-            			component.name,
-            			absoluteSrcDirectoryPath,
-            			absoluteDistDirectoryPath,
-            			artifactsConfigWithDefaults
-            		)
-            	);
-            });
-	}
-
-	public async build(): Promise<string[]> {
-		const emittedFilesPaths: string[] = (
-			await Promise.all(
-				[ ...this.components ]
-                    .flatMap((component: ExtensionComponent) => {
-                    	return component.build();
-                    })
-			)
-		).flat();
-
-		return emittedFilesPaths.flat();
 	}
 }

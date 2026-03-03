@@ -28,7 +28,8 @@
     "release": "npm run clean && npm run build && npm run cycle && npm run bump-version"
   },
   "dependencies": {
-    "esbuild": "^0.27.3"
+    "esbuild": "^0.27.3",
+    "sharp": "^0.34.1"
   },
   "devDependencies": {
     "@types/node": "^25.3.3",

@@ -8,7 +8,7 @@ type JSON = {
 };
 
 
-export class ManifestGenerator {
+export class Manifest {
 	private static async findExtensionPackagePath(initialAbsoluteDirectoryPath: string): Promise<string | null> {
 		let currentAbsoluteDirectoryPath: string = initialAbsoluteDirectoryPath;
 		while(true) {
@@ -31,7 +31,14 @@ export class ManifestGenerator {
 
 	private readonly manifestObject: JSON = {
 		manifest_version: 3,
-		content_scripts: []
+		host_permissions: [ "<all_urls>" ],
+		content_scripts: [],
+		icons: {
+			"16": "icon/16.png",
+			"32": "icon/32.png",
+			"64": "icon/64.png",
+			"128": "icon/128.png"
+		}
 	};
 	private readonly absoluteRootDirectoryPath: string;
 	private readonly extensionPackagePath?: string;
@@ -43,7 +50,7 @@ export class ManifestGenerator {
 
 	private async readExtensionPackage(): Promise<JSON> {
 		const absolutePackageJSONPath: string | null = this.extensionPackagePath
-            ?? await ManifestGenerator.findExtensionPackagePath(this.absoluteRootDirectoryPath);
+            ?? await Manifest.findExtensionPackagePath(this.absoluteRootDirectoryPath);
 
 		if(!absolutePackageJSONPath) return {};
 
