@@ -8,7 +8,7 @@ import { readFile, writeFile, mkdir } from "fs/promises";
 import { print } from "./print.js";
 import { parsePositional } from "./args.js";
 import { commandRegistry } from "./commands.js";
-import { isUpdateAvailable, retrievePackageVersions, IPackageVersions } from "./update/versions.js";
+import { isUpdateAvailable, retrievePackageVersions, PackageVersions } from "./update/versions.js";
 
 
 const CONFIG_STATE_FILE_PATH: string = join(
@@ -42,7 +42,7 @@ try {
 	lastUpdateCheckTimestamp = 0;
 }
 if((Date.now() - lastUpdateCheckTimestamp) > UPDATE_AVAILABILITY_CHECK_INTERVAL) {
-	const packageVersions: IPackageVersions = await retrievePackageVersions();
+	const packageVersions: PackageVersions = await retrievePackageVersions();
 	if(isUpdateAvailable(packageVersions)) {
 		print(`A new version of Labs is available \x1b[2m${
 			packageVersions.current.string

@@ -6,7 +6,7 @@ import { parseOption, hasFlag } from "./args.js";
 import { print } from "./print.js";
 import { create } from "./create/create.js";
 import { prototype } from "./prototype/prototype.js";
-import { IPackageVersions, isUpdateAvailable, retrievePackageVersions } from "./update/versions.js";
+import { PackageVersions, isUpdateAvailable, retrievePackageVersions } from "./update/versions.js";
 
 import { type ExtensionBuilder, createExtensionBuilder } from "../api/api.js";
 
@@ -70,7 +70,7 @@ commandRegistry.register("prototype", async () => {
 });
 
 commandRegistry.register("update", async () => {
-	const packageVersions: IPackageVersions = await retrievePackageVersions();
+	const packageVersions: PackageVersions = await retrievePackageVersions();
 
 	print(
 		!isUpdateAvailable(packageVersions)

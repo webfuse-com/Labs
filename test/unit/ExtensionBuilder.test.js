@@ -30,39 +30,44 @@ const extensionBuilder = new ExtensionBuilder(
 
 const buildResult = await extensionBuilder.build();
 
-assertExists(
+assertNotExists(
     join(distPath, "foo.js"),
+    "Did emit extension component file to dist parent directory"
+);
+
+assertExists(
+    join(distPath, "./foo/foo.js"),
     "Did not emit extension component file 'foo.js'"
 );
 
 assertNotExists(
-    join(distPath, "foo.html"),
+    join(distPath, "./foo/foo.html"),
     "Did  emit extension component file 'foo.html'"
 );
 
 assertExists(
-    join(distPath, "bar.js"),
+    join(distPath, "./bar/bar.js"),
     "Did not emit extension component file 'bar.js'"
 );
 
 assertExists(
-    join(distPath, "bar.html"),
+    join(distPath, "./bar/bar.html"),
     "Did not emit extension component file 'bar.html'"
 );
 
 assertExists(
-    join(distPath, "bar.css"),
+    join(distPath, "./bar/bar.css"),
     "Did not emit extension component file 'bar.css'"
 );
 
 assertEquals(
-    readFileSync(join(distPath, "foo.js")).toString(),
+    readFileSync(join(distPath, "./foo/foo.js")).toString(),
     "",
     "Invalid emitted file contents for 'foo.js'"
 );
 
 assertEquals(
-    readFileSync(join(distPath, "bar.js")).toString(),
+    readFileSync(join(distPath, "./bar/bar.js")).toString(),
     "...",
     "Invalid emitted file contents for 'bar.js'"
 );
@@ -70,10 +75,10 @@ assertEquals(
 assertEquals(
     buildResult,
     [
-        "foo.js",
-        "bar.js",
-        "bar.html",
-        "bar.css"
+        "./foo/foo.js",
+        "./bar/bar.js",
+        "./bar/bar.html",
+        "./bar/bar.css"
     ]
         .map(fileName => join(distPath, fileName)),
     "Invalid build artifacts paths"

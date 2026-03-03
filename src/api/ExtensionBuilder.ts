@@ -124,7 +124,7 @@ export class ExtensionComponent {
 
 			const outFileName: string = `${name}.${artifactExtension}`;
 			this.emitters[artifactExtension] = new ExtensionFileEmitter(
-				absoluteDistDirectoryPath,
+				join(absoluteDistDirectoryPath, name),
 				outFileName
 			);
 		}

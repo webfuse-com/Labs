@@ -1,6 +1,6 @@
 import { spawnSync } from "child_process";
 
-import { isUpdateAvailable, readLocalPackage, retrievePackageVersions, IPackageVersions } from "./versions.js";
+import { isUpdateAvailable, readLocalPackage, retrievePackageVersions, PackageVersions } from "./versions.js";
 
 
 function installUpdate(globally = false) {
@@ -11,8 +11,8 @@ function installUpdate(globally = false) {
 }
 
 
-export async function update(): Promise<IPackageVersions> {
-	const packageVersions: IPackageVersions = await retrievePackageVersions();
+export async function update(): Promise<PackageVersions> {
+	const packageVersions: PackageVersions = await retrievePackageVersions();
 	const availableUpdate: boolean = isUpdateAvailable(packageVersions);
 
 	if(!availableUpdate) return null;

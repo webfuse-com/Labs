@@ -7,14 +7,14 @@ const LOCAL_PACKAGE_FILE_PATH: string = join(import.meta.dirname, "../../package
 const REMOTE_PACKAGE_URL: string = "https://raw.githubusercontent.com/webfuse-com/labs/refs/heads/main/package.json";
 
 
-type IResolveInterface = {
+type ResolveInterface = {
 	string: string;
 	number: [ number, number, number ];
 };
 
-export type IPackageVersions = {
-    current: IResolveInterface;
-    latest: IResolveInterface;
+export type PackageVersions = {
+    current: ResolveInterface;
+    latest: ResolveInterface;
 };
 
 
@@ -49,8 +49,8 @@ export async function readLocalPackage<T>(): Promise<T> {
 	) as T;
 }
 
-export async function retrievePackageVersions(): Promise<IPackageVersions> {
-	const resolveInterface = (semver: string): IResolveInterface => {
+export async function retrievePackageVersions(): Promise<PackageVersions> {
+	const resolveInterface = (semver: string): ResolveInterface => {
 		return {
 			string: semver,
 			number: semver.match(/\d+/g).map((digit: string) => parseInt(digit)) as [ number, number, number ]
@@ -68,7 +68,7 @@ export async function retrievePackageVersions(): Promise<IPackageVersions> {
 	return info;
 }
 
-export function isUpdateAvailable(packageVersions: IPackageVersions): boolean {
+export function isUpdateAvailable(packageVersions: PackageVersions): boolean {
 	return packageVersions.latest.number
 		.reduce((isOutdated: boolean, versionSegment: number, i: number) => {
 			return isOutdated || (versionSegment > packageVersions.current.number[i]);

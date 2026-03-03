@@ -5,8 +5,8 @@
   "type": "module",
   "main": "./dist/api.js",
   "files": [
-    "./assets",
     "./dist",
+    "./prototype-app",
     "./cli.help.txt"
   ],
   "bin": {
