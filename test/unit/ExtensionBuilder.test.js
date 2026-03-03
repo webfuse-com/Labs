@@ -1,14 +1,19 @@
 import { join } from "path";
-import { readFileSync } from "fs";
+import { rmSync, readFileSync } from "fs";
 
 import { ExtensionBuilder } from "../../tmp/api/ExtensionBuilder.js";
 import { AssetBundler } from "../../tmp/api/AssetBundler.js";
 
 
-const distPath = join(import.meta.dirname, "files", "dist");
+const dirPath = join(import.meta.dirname, "./files/generated/a");
+const srcPath = join(dirPath, "src");
+const distPath = join(dirPath, "dist");
+
+rmSync(dirPath, { recursive: true, force: true });
+
 
 const extensionBuilder = new ExtensionBuilder(
-    join(import.meta.dirname, "files", "src"),
+    srcPath,
     distPath,
     {
         name: "foo",
@@ -16,7 +21,7 @@ const extensionBuilder = new ExtensionBuilder(
     {
         name: "bar",
         artifactsConfig: {
-            js: { enabled: true, AssetBundler: new AssetBundler(rawData => rawData + "...") },
+            js: { enabled: true, assetBundler: new AssetBundler(rawData => rawData + "...") },
             html: { enabled: true },
             css: { enabled: true }
         }

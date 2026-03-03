@@ -4,6 +4,15 @@
   "author": "Thassilo M. Schiepanski",
   "type": "module",
   "main": "./dist/api.js",
+  "files": [
+    "./assets",
+    "./dist",
+    "./cli.help.txt"
+  ],
+  "bin": {
+    "labs": "./dist/cli/__cli.js",
+    "webfuse-labs": "./dist/cli/__cli.js"
+  },
   "scripts": {
     "build": "npx esbuild './src/**/*.ts' --outdir=./tmp --bundle --platform=node --packages=external --format=esm --target=es2022",
     "build:watch": "npm run build -- --watch",
@@ -11,6 +20,8 @@
     "lint:fix": "npm run lint -- --fix",
     "test:unit": "node ./test/test.unit.js",
     "test": "npm run test:unit",
+    "cli:bundle": "./labs bundle --stacktrace --working-dir ./example",
+    "cli:prototype": "./labs prototype --stacktrace --working-dir ./example",
     "clean": "rm -rf ./tmp && rm -rf ./dist",
     "cycle": "cp -r ./tmp ./dist",
     "bump-version": "node ./scripts/bump-version.js",

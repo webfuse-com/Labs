@@ -5,6 +5,11 @@ import { stat, mkdir, writeFile, readFile } from "fs/promises";
 import { AssetBundler } from "./AssetBundler.js";
 
 
+const EXTENSION_ALIASES: Record<string, string[]> = {
+	"js": [ "ts" ]
+};
+
+
 type NoData = null;
 
 interface ExtensionComponentFileMap<T> extends Record<string, T | undefined> {
@@ -16,46 +21,55 @@ interface ExtensionComponentFileMap<T> extends Record<string, T | undefined> {
 type ExtensionComponentConfig = ExtensionComponentFileMap<{
 	enabled: boolean;
 
-	AssetBundler?: AssetBundler;
+	assetBundler?: AssetBundler;
 }>;
 
 
 export class ExtensionFileReader {
-	private readonly absoluteSrcFilePath: string;
+	private readonly absoluteSrcFilePaths: string[];
 	private readonly AssetBundler: AssetBundler;
 
 	private lastModificationTimeMs: number;
 
-	constructor(absoluteSrcFilePath: string, AssetBundler?: AssetBundler) {
-		this.absoluteSrcFilePath = absoluteSrcFilePath;
+	constructor(absoluteSrcDirectoryPath: string, fileNames: string[], AssetBundler?: AssetBundler) {
+		this.absoluteSrcFilePaths = fileNames
+			.map((fileName: string) => join(absoluteSrcDirectoryPath, fileName));
 		this.AssetBundler = AssetBundler;
 
 		this.lastModificationTimeMs = -Infinity;
 	}
 
-	private async ensureFileExists() {
-		try {
-			await stat(this.absoluteSrcFilePath);
-		} catch(err) {
-			if((err as NodeJS.ErrnoException)?.code !== "ENOENT") throw err;
+	private async resolveSingleAbsoluteSrcFilePath(): Promise<string> {
+		for(const absoluteSrcFilePath of this.absoluteSrcFilePaths) {
+			try {
+				await stat(absoluteSrcFilePath);
 
-			await mkdir(dirname(this.absoluteSrcFilePath), { recursive: true });
-			await writeFile(this.absoluteSrcFilePath, "");
+				return absoluteSrcFilePath;
+			} catch(err) {
+				if((err as NodeJS.ErrnoException)?.code !== "ENOENT") throw err;
+			}
 		}
+
+		const defaultAbsoluteSrcFilePath: string = this.absoluteSrcFilePaths[0];
+
+		await mkdir(dirname(defaultAbsoluteSrcFilePath), { recursive: true });
+		await writeFile(defaultAbsoluteSrcFilePath, "");
+
+		return defaultAbsoluteSrcFilePath;
 	}
 
 	public async read(): Promise<string | NoData> {
-		await this.ensureFileExists();
+		const absoluteSrcFilePath: string = await this.resolveSingleAbsoluteSrcFilePath();
 
-		const stats: Stats = await stat(this.absoluteSrcFilePath);
+		const stats: Stats = await stat(absoluteSrcFilePath);
 		const lastModificationTimeMs = stats.mtimeMs;
 		const hasChanged: boolean = (lastModificationTimeMs > this.lastModificationTimeMs);
 
 		if(!hasChanged) return null;
 
-		const rawData: string = (await readFile(this.absoluteSrcFilePath)).toString();
+		const rawData: string = (await readFile(absoluteSrcFilePath)).toString();
 		const assetBuiltData: string = this.AssetBundler
-			? await this.AssetBundler.bundle(rawData, dirname(this.absoluteSrcFilePath))
+			? await this.AssetBundler.bundle(rawData, dirname(absoluteSrcFilePath))
 			: rawData;
 
 		this.lastModificationTimeMs = lastModificationTimeMs;
@@ -67,8 +81,8 @@ export class ExtensionFileReader {
 export class ExtensionFileEmitter {
 	private readonly absoluteDistFilePath: string;
 
-	constructor(absoluteDistFilePath: string) {
-		this.absoluteDistFilePath = absoluteDistFilePath;
+	constructor(absoluteDistDirectoryPath: string, fileName: string) {
+		this.absoluteDistFilePath = join(absoluteDistDirectoryPath, fileName);
 	}
 
 	public async toFile(data: string): Promise<string> {
@@ -98,14 +112,20 @@ export class ExtensionComponent {
 		for(const artifactExtension in this.artifactsConfig) {
 			if(!this.artifactsConfig[artifactExtension].enabled) continue;
 
-			const fileName: string = `${name}.${artifactExtension}`;
-
+			const inFileNames: string[] = [
+				artifactExtension,
+				...(EXTENSION_ALIASES[artifactExtension] ?? [])
+			].map((artifactExtension: string) => `${name}.${artifactExtension}`);
 			this.readers[artifactExtension] = new ExtensionFileReader(
-				join(absoluteSrcDirectoryPath, name, fileName),
-				this.artifactsConfig[artifactExtension].AssetBundler
+				join(absoluteSrcDirectoryPath, name),
+				inFileNames,
+				this.artifactsConfig[artifactExtension].assetBundler
 			);
+
+			const outFileName: string = `${name}.${artifactExtension}`;
 			this.emitters[artifactExtension] = new ExtensionFileEmitter(
-				join(absoluteDistDirectoryPath, fileName)
+				absoluteDistDirectoryPath,
+				outFileName
 			);
 		}
 	}

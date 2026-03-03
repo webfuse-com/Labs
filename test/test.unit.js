@@ -19,8 +19,12 @@ const assertIn = (actualPartial, expected, message, preserveWhitespace = false, 
     }, message);
 };
 
-global.assertIn = (actualPartial, expected, message, preserveWhitespace) => {
-    assertIn(actualPartial, expected, message, preserveWhitespace, true);
+global.assertIn = (actualPartials, expected, message, preserveWhitespace) => {
+    [ actualPartials ]
+        .flat()
+        .forEach(actualPartial => {
+            assertIn(actualPartial, expected, message, preserveWhitespace, true);
+        });
 };
 
 global.assertNotIn = (actualPartial, expected, message, preserveWhitespace) => {

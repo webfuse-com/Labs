@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "bundle": "npx labs bundle",
+    "prototype": "npx labs prototype"
+  },
+  "devDependencies": {
+    "@webfuse-com/labs": "github:webfuse-com/labs"
+  }
+}

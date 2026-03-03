@@ -1,0 +1,16 @@
+{
+	"path": {
+		"name": "path",
+		"shorthand": "P"
+	},
+	"stacktrace": {
+		"name": "stacktrace"
+	},
+	"watch": {
+		"name": "watch",
+		"shorthand": "W"
+	},
+	"working-dir": {
+		"name": "working-dir"
+	}
+}
