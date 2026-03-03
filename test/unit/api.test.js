@@ -92,3 +92,5 @@ assertIn(
     readFileSync(join(distPath, "/popup/popup.html")).toString(),
     "Invalid emitted file contents for 'popup.html'"
 );
+
+// TODO: Test env + manifest

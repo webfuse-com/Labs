@@ -5,6 +5,7 @@ import sharp from "sharp";
 import { resolve, dirname, join } from "path";
 import { ExtensionComponent, ExtensionComponentType, ExtensionComponentConfig } from "./ExtensionComponent.js";
 import { Manifest } from "./Manifest.js";
+import { Env } from "./Env.js";
 
 
 const ICON_SRC_FILE_PATH: string = "./icon.svg";
@@ -14,6 +15,7 @@ const DIST_PNG_ICON_SIZES_PX: number[] = [ 16, 32, 64, 128 ];
 
 export class Extension {
 	private readonly manifest: Manifest;
+	private readonly env: Env;
 	private readonly components: ExtensionComponent[] = [];
 	private readonly absoluteSrcDirectoryPath: string;
 	private readonly absoluteDistDirectoryPath: string;
@@ -27,6 +29,7 @@ export class Extension {
 		this.absoluteDistDirectoryPath = resolve(distDirectoryPath);
 
 		this.manifest = new Manifest(dirname(this.absoluteSrcDirectoryPath));
+		this.env = new Env(dirname(this.absoluteSrcDirectoryPath));
 
 		components
             .forEach(component => {
@@ -79,10 +82,13 @@ export class Extension {
 			)
 		).flat();
 
+		this.manifest.addEnv(await this.env.toObject());
+
 		const emitManifestFilePath: string = join(this.absoluteDistDirectoryPath, `manifest.json`);
 		await writeFile(emitManifestFilePath, await this.manifest.toString());
 		emittedFilesPaths.push(emitManifestFilePath);
 
+		// TODO: to dedicated class
 		try {
 			const iconSrcFilePath: string = join(this.absoluteSrcDirectoryPath, ICON_SRC_FILE_PATH);
 

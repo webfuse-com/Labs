@@ -1,4 +1,4 @@
-import { join, dirname, resolve, normalize } from "path";
+import { resolve, join, normalize } from "path";
 import { readFile, stat } from "fs/promises";
 
 
@@ -9,26 +9,6 @@ type JSON = {
 
 
 export class Manifest {
-	private static async findExtensionPackagePath(initialAbsoluteDirectoryPath: string): Promise<string | null> {
-		let currentAbsoluteDirectoryPath: string = initialAbsoluteDirectoryPath;
-		while(true) {
-			const absolutePackageFilePath: string = join(currentAbsoluteDirectoryPath, "package.json");
-
-			try {
-				await stat(absolutePackageFilePath);
-
-				return absolutePackageFilePath;
-			} catch {
-				const parentAbsoluteDirectoryPath: string = dirname(currentAbsoluteDirectoryPath);
-				if (parentAbsoluteDirectoryPath === currentAbsoluteDirectoryPath) break;
-
-				currentAbsoluteDirectoryPath = parentAbsoluteDirectoryPath;
-			}
-		}
-
-		return null;
-	}
-
 	private readonly manifestObject: JSON = {
 		manifest_version: 3,
 		host_permissions: [ "<all_urls>" ],
@@ -41,20 +21,30 @@ export class Manifest {
 		}
 	};
 	private readonly absoluteRootDirectoryPath: string;
-	private readonly extensionPackagePath?: string;
 
-	constructor(rootDirectoryPath: string, extensionPackagePath?: string) {
+	constructor(rootDirectoryPath: string) {
 		this.absoluteRootDirectoryPath = resolve(rootDirectoryPath);
-		this.extensionPackagePath = extensionPackagePath;
 	}
 
 	private async readExtensionPackage(): Promise<JSON> {
-		const absolutePackageJSONPath: string | null = this.extensionPackagePath
-            ?? await Manifest.findExtensionPackagePath(this.absoluteRootDirectoryPath);
+		const absolutePackageFilePath: string = join(this.absoluteRootDirectoryPath, "package.json");
 
-		if(!absolutePackageJSONPath) return {};
+		try {
+			await stat(absolutePackageFilePath);
+		} catch(err) {
+			if((err as NodeJS.ErrnoException)?.code !== "ENOENT") throw err;
 
-		return JSON.parse((await readFile(absolutePackageJSONPath)).toString()) as JSON;
+			return {};
+		}
+
+		return JSON.parse((await readFile(absolutePackageFilePath)).toString()) as JSON;
+	}
+
+	private async updatePackageFields() {
+		const extensionPackageObject: JSON = await this.readExtensionPackage();
+
+		this.manifestObject.name = extensionPackageObject?.name;
+		this.manifestObject.version = extensionPackageObject?.version;
 	}
 
 	public addBackgroundScript(relativeScriptPath: string) {
@@ -80,11 +70,8 @@ export class Manifest {
 		this.manifestObject.chrome_url_overrides.newtab = normalize(relativeMarkupPath);
 	}
 
-	private async updatePackageFields() {
-		const extensionPackageObject: JSON = await this.readExtensionPackage();
-
-		this.manifestObject.name = extensionPackageObject?.name;
-		this.manifestObject.version = extensionPackageObject?.version;
+	public addEnv(envObject: Record<string, string>) {
+		this.manifestObject.env = envObject;
 	}
 
 	public async toString(): Promise<string> {
