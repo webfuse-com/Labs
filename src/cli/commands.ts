@@ -72,7 +72,9 @@ commandRegistry.register("create", async () => {
 commandRegistry.register("prototype", async () => {
 	const absoluteWorkingDirectoryPath: string = await bundle(true);
 
-	await prototype(absoluteWorkingDirectoryPath);
+	const wsServerHandler = await prototype(absoluteWorkingDirectoryPath);
+
+	wsServerHandler.sendRefresh();	// TODO
 });
 
 commandRegistry.register("update", async () => {
