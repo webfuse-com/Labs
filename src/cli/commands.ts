@@ -31,30 +31,43 @@ commandRegistry.register("help", () => {
 	);
 });
 
-const bundle = async (watch: boolean = false): Promise<string> => {
+const bundle = async (watch: boolean = false): Promise<{
+	absoluteWorkingDirectoryPath: string;
+	extensionEventEmitter?: Extension;
+}> => {
 	const absoluteWorkingDirectoryPath: string = resolve(parseOption("working-dir") ?? ".");
 
-	const extensionBuilder: Extension = createExtension(absoluteWorkingDirectoryPath);
+	const extension: Extension = createExtension(absoluteWorkingDirectoryPath);
 
-	if(!watch) {
-		const emittedPaths: string[] = await extensionBuilder.bundle();
+	const emittedPaths: string[] = await extension.bundle();
+	const emittedFileCount: number = emittedPaths.length;
+	const maxPathPrintLines: number = 10;
+	print(
+		[
+			"Emitted bundle:",
+			...emittedPaths
+				.slice(0, maxPathPrintLines)
+				.map((line: string) => `→ ${line}`),
+			emittedFileCount > maxPathPrintLines ? `+ ${emittedFileCount - maxPathPrintLines} more` : ""
+		]
+			.filter((line: string) => !!line)
+			.join("\n")
+	);
 
-		print(
-			[
-				"Emitted bundle:",
-				...emittedPaths
-                    .map((line: string) => `→ ${line}`)
-			]
-                .join("\n")
-		);
+	if(!watch) return { absoluteWorkingDirectoryPath };
 
-		return absoluteWorkingDirectoryPath;
-	}
+	extension
+		.on("bundle", (emittedFilesPaths: string[]) => {
+			print(`→ Emitted bundle (rebuilt ${emittedFilesPaths.length} files).`);
+		});
 
-	// TODO
 
-	// TODO: Bundle events
-	return absoluteWorkingDirectoryPath;
+	extension.toggleWatch();
+
+	return {
+		absoluteWorkingDirectoryPath,
+		extensionEventEmitter: extension
+	};
 };
 
 commandRegistry.register("bundle",async  () => {
@@ -70,11 +83,14 @@ commandRegistry.register("create", async () => {
 });
 
 commandRegistry.register("prototype", async () => {
-	const absoluteWorkingDirectoryPath: string = await bundle(true);
+	const bundleResult = await bundle(true);
 
-	const wsServerHandler = await prototype(absoluteWorkingDirectoryPath);
+	const serverResult = await prototype(bundleResult.absoluteWorkingDirectoryPath);
 
-	wsServerHandler.sendRefresh();	// TODO
+	bundleResult.extensionEventEmitter
+		.on("bundle", () => serverResult.wsServerHandler.sendRefresh());
+
+	print(`UI prototype available at \x1b[1mhttp://localhost:${serverResult.appPort}\x1b[0m`);
 });
 
 commandRegistry.register("update", async () => {

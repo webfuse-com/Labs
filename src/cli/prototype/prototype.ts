@@ -2,7 +2,6 @@ import { join, resolve, extname } from "path";
 import { createServer } from "http";
 import { stat, readFile } from "fs/promises";
 
-import { print } from "../print.js";
 import { createHash } from "crypto";
 
 
@@ -163,13 +162,17 @@ function createWSServer(): Promise<WSServerHandler> {
 }
 
 
-export async function prototype(extensionBundleDirectoryPath: string): Promise<WSServerHandler> {
+export async function prototype(extensionBundleDirectoryPath: string): Promise<{
+	appPort: number;
+	wsServerHandler: WSServerHandler;
+}> {
 	const absoluteExtensionBundleDirectoryDistPath: string = resolve(extensionBundleDirectoryPath, "./dist");
 
 	await createHTTPServer(absoluteExtensionBundleDirectoryDistPath);
 	const wsServerHandler = await createWSServer();
 
-	print(`Prototyping app running at \x1b[1mhttp://localhost:${PROTOTYPING_SERVER_HTTP_PORT}\x1b[0m`);
-
-	return wsServerHandler;
+	return {
+		appPort: PROTOTYPING_SERVER_HTTP_PORT,
+		wsServerHandler
+	};
 }

@@ -1,3 +1,4 @@
+import { EventEmitter } from "events";
 import { stat, mkdir, writeFile } from "fs/promises";
 
 import sharp from "sharp";
@@ -11,20 +12,26 @@ import { Env } from "./Env.js";
 const ICON_SRC_FILE_PATH: string = "./icon.svg";
 const ICON_DIST_DIRECTORY_PATH: string = "./icon";
 const DIST_PNG_ICON_SIZES_PX: number[] = [ 16, 32, 64, 128 ];
+const WATCH_INTERVAL_MS: number = 3000;
 
 
-export class Extension {
+export class Extension extends EventEmitter {
 	private readonly manifest: Manifest;
 	private readonly env: Env;
 	private readonly components: ExtensionComponent[] = [];
 	private readonly absoluteSrcDirectoryPath: string;
 	private readonly absoluteDistDirectoryPath: string;
 
+	private isWatching: boolean = false;
+	private watchInterval?: NodeJS.Timeout;
+
 	constructor(srcDirectoryPath: string, distDirectoryPath: string, ...components: {
 		type: ExtensionComponentType
         name: string;
         artifactsConfig?: Partial<ExtensionComponentConfig>;
     }[]) {
+		super();
+
 		this.absoluteSrcDirectoryPath = resolve(srcDirectoryPath);
 		this.absoluteDistDirectoryPath = resolve(distDirectoryPath);
 
@@ -72,15 +79,30 @@ export class Extension {
             });
 	}
 
+	public toggleWatch() {
+		clearInterval(this.watchInterval);
+
+		this.isWatching = !this.isWatching;
+
+		if(!this.isWatching) return;
+
+		const watchCb = (() => this.bundle()).bind(this) as () => void;
+
+		this.watchInterval = setInterval(watchCb, WATCH_INTERVAL_MS);
+	}
+
 	public async bundle(): Promise<string[]> {
 		const emittedFilesPaths: string[] = (
 			await Promise.all(
 				[ ...this.components ]
-                    .flatMap((component: ExtensionComponent) => {
+                    .map((component: ExtensionComponent) => {
                     	return component.build();
                     })
 			)
 		).flat();
+
+		// TODO: Conditional adjacent asset emission (modified?)
+		if(!emittedFilesPaths.length) return[]
 
 		this.manifest.addEnv(await this.env.toObject());
 
@@ -116,6 +138,9 @@ export class Extension {
 			if((err as NodeJS.ErrnoException)?.code !== "ENOENT") throw err;
 		}
 
-		return emittedFilesPaths.flat();
+		emittedFilesPaths.length
+			&& this.emit("bundle", emittedFilesPaths);
+
+		return emittedFilesPaths;
 	}
 }
